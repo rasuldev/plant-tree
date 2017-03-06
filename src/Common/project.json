@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+
+  "dependencies": {
+    "ImageProcessorCore": "1.0.0-alpha1095",
+    "MailKit": "1.10.2",
+    "Microsoft.AspNetCore.Mvc": "1.0.1",
+    "NETStandard.Library": "1.6.0",
+    "NLog.Web.AspNetCore": "4.3.1"
+  },
+
+  "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50"
+    }
+  }
+}
