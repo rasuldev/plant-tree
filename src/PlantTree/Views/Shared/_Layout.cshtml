@@ -6,14 +6,18 @@
     <title>@ViewData["Title"] - PlantTree</title>
 
     <environment names="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
+        <script type="text/javascript" src="~/lib/jquery/dist/jquery.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css"/>
+        <link rel="stylesheet" href="~/css/site.css"/>
     </environment>
     <environment names="Staging,Production">
+        <script type="text/javascript" src="~/lib/jquery/dist/jquery.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"/>
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true"/>
     </environment>
 </head>
 <body>
@@ -30,10 +34,14 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li><a asp-area="" asp-controller="Projects" asp-action="Index">Projects</a></li>
+                    <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
+                    <li><a asp-area="" asp-controller="ProjectUsers" asp-action="Index">Users in Projects</a></li>
+                    <li><a asp-area="" asp-controller="Images" asp-action="Index">Images</a></li>
+                    <li><a asp-area="" asp-controller="Transactions" asp-action="Index">Transactions</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Api">Api</a></li>
                 </ul>
+                @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>
     </div>
@@ -41,7 +49,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2017 - PlantTree</p>
+            <p>&copy; 2016 - PlantTree</p>
         </footer>
     </div>
 

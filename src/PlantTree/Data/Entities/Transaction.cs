@@ -17,7 +17,7 @@ namespace PlantTree.Data.Entities
         public int ProjectId { get; set; }
         public virtual Project Project { get; set; }
         public decimal Amount  { get; set; }
-        public int TreePlantedCount { get; set; }
+        public int TreeCount { get; set; }
         [Required]
         public Currency? Currency { get; set; } = Entities.Currency.Ruble;
         public DateTime CreationDate { get; set; } = DateTime.Now;
@@ -37,6 +37,6 @@ namespace PlantTree.Data.Entities
         Pending, 
 
         // Transaction was not completed
-        Failed
+        Fail
     }
 }

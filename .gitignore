@@ -8,7 +8,7 @@ AuthTokenServer.json
 #X509
 cert.pfx
 DataProtectionKeys/
-
+**/wwwroot/images/projects/
 
 # User-specific files
 *.suo

@@ -26,12 +26,6 @@ namespace PlantTree.Data
             Cache = cache;
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            //EnableCache(new AppDbContextCache(this, ));
-        }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

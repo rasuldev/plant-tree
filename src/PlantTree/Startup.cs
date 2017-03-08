@@ -36,7 +36,7 @@ namespace PlantTree
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables()
-                .AddJsonFile("conf.json")
+                .AddJsonFile("Common.json")
                 .AddJsonFile("AuthTokenServer.json");
             Configuration = builder.Build();
             HostingEnvironment = env;
@@ -152,7 +152,7 @@ namespace PlantTree
                     //serviceScope.ServiceProvider.GetService<AppDbContext>().Database.EnsureDeleted();
                     //serviceScope.ServiceProvider.GetService<AppDbContext>().Database.EnsureCreated();
                     var dbc = serviceScope.ServiceProvider.GetService<AppDbContext>();
-                    dbc.Database.Migrate();
+                    //dbc.Database.Migrate();
                 }
             }
 

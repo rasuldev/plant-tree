@@ -17,10 +17,10 @@ namespace PlantTree.Data.Entities
         public string Description { get; set; }
         public string ShortDescription { get; set; }
         public int Goal { get; set; } = 0;
-        public int Reached { get; set; } = 0;
+        public int Reached { get; protected set; } = 0;
         public decimal TreePrice { get; set; }
-        public ProjectStatus Status { get; set; }
-        public DateTime CreationDate { get; set; }
+        public ProjectStatus Status { get; set; } = ProjectStatus.InProgress;
+        public DateTime CreationDate { get; set; } = DateTime.Now;
         public DateTime ReachedDate { get; set; }
         public DateTime FinishedDate { get; set; }
 
@@ -69,10 +69,20 @@ namespace PlantTree.Data.Entities
         public int DonatorsCount { get; set; }
 
         // ShouldSerialize - conditional property serialization
+
+        public void AddTrees(int treeCount)
+        {
+            Reached += treeCount;
+            if (Reached >= Goal)
+            {
+                Status = ProjectStatus.Reached;
+                ReachedDate = DateTime.Now;
+            }
+        }
     }
 
     public enum ProjectStatus
     {
-        InProgress, Finished
+        InProgress = 10, Reached = 50, Finished = 100
     }
 }

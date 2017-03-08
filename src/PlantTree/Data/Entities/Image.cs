@@ -11,6 +11,10 @@ namespace PlantTree.Data.Entities
 {
     public class Image : CommonImage
     {
+        public Image()
+        {
+            
+        }
         public Image(string title, ImageKind kind)
         {
             Kind = kind;
