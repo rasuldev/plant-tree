@@ -20,14 +20,9 @@ namespace PlantTree.Data
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<News> News { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options, AppDbContextCache cache)
+        public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
-            if (cache != null)
-            {
-                cache.Context = this;
-                Cache = cache;
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -84,34 +79,23 @@ namespace PlantTree.Data
 
 
         #region Cache
-
-        //public void EnableCache(AppDbContextCache cache)
-        //{
-        //    Cache = cache;
-        //}
         
-
-        public AppDbContextCache Cache { get; protected set; }
+        public event EventHandler SavingChanges;
+        protected void OnSavingChanges()
+        {
+            SavingChanges?.Invoke(this, EventArgs.Empty);
+        }
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
-            ProcessCache();
+            OnSavingChanges();
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = new CancellationToken())
         {
-            ProcessCache();
+            OnSavingChanges();
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        }
-
-        protected void ProcessCache()
-        {
-            if (Cache == null) return;
-            if (ChangeTracker.Entries<Project>().Any(p => p.State != EntityState.Unchanged))
-            {
-                Cache.InvalidateAllProjectsCache();
-            }
         }
 
         #endregion

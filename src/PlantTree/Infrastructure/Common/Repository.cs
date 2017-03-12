@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -6,21 +7,35 @@ using PlantTree.Data;
 using PlantTree.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace PlantTree.Infrastructure.Common
 {
-    public class AppDbContextCache
+    /// <summary>
+    /// Contains some common queries to context. Supports caching.
+    /// </summary>
+    public class Repository
     {
-        public AppDbContext Context { get; set; }
+        private readonly AppDbContext _context;
         private readonly IMemoryCache _cache;
-        private readonly ILogger<AppDbContextCache> _logger;
+        private readonly ILogger<Repository> _logger;
         private readonly int[] _cachePageList = { 1, 2, 3 };
         private readonly int[] _cachePageSizeList = { 10, 15, 20, 25, 30 };
-
-        public AppDbContextCache(IMemoryCache cache, ILogger<AppDbContextCache> logger)
+        
+        public Repository(AppDbContext context, IMemoryCache cache, ILogger<Repository> logger)
         {
             _cache = cache;
             _logger = logger;
+            _context = context;
+            _context.SavingChanges += ContextOnSavingChanges;
+        }
+
+        public bool UseCache { get; set; } = false;
+
+        private void ContextOnSavingChanges(object sender, EventArgs eventArgs)
+        {
+            if (!UseCache) return;
+            ProcessProjectsCache();
         }
 
         #region Projects
@@ -43,7 +58,7 @@ namespace PlantTree.Infrastructure.Common
             var cacheKey = GetProjectsCacheKey(page, pagesize);
             if (_cache.TryGetValue(cacheKey, out projects)) return projects;
 
-            projects = await Context.Projects
+            projects = await _context.Projects
                 .Include(p => p.MainImage).Include(p => p.OtherImages).Include(p => p.ProjectUsers)
                 .Skip((page - 1) * pagesize)
                 .Take(pagesize)
@@ -51,7 +66,7 @@ namespace PlantTree.Infrastructure.Common
 
             // Place in cache only first several pages 
             // We cache only limited amount of pagesizes to protect from cache-overflow attack
-            if (AllowCachingProjects(page, pagesize))
+            if (UseCache && AllowCachingProjects(page, pagesize))
             {
                 _cache.Set(cacheKey, projects);
             }
@@ -85,6 +100,13 @@ namespace PlantTree.Infrastructure.Common
             }
         }
 
+        protected void ProcessProjectsCache()
+        {
+            if (_context.ChangeTracker.Entries<Project>().Any(p => p.State != EntityState.Unchanged))
+            {
+                InvalidateAllProjectsCache();
+            }
+        }
         #endregion
     }
 }

@@ -51,11 +51,12 @@ namespace PlantTree
             services.AddMemoryCache();
             services.AddLogging();
 
-            // Cache
-            services.AddSingleton<AppDbContextCache>();
             // Entity framework core
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            // Repository with caching support
+            services.AddScoped<Repository>();
 
             // Identity
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>

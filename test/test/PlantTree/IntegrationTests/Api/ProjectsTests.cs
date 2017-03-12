@@ -45,8 +45,7 @@ namespace test.PlantTree.IntegrationTests.Api
                     //services.AddDbContext<AppDbContext>(options => options.Us);
                     services.AddScoped<AppDbContext>(provider =>
                     {
-                        var cache = provider.GetRequiredService<AppDbContextCache>();
-                        var context = new AppDbContext(_options, cache);
+                        var context = new AppDbContext(_options);
                         context.Add(new Project() {Id = 1, Name = "Посади дерево", Description = "Tree"});
                         context.Add(new Project() { Id = 2, Name = "Посади дерево", Description = "Tree" });
                         context.Add(new Project() { Id = 3, Name = "Посади дерево", Description = "Tree" });

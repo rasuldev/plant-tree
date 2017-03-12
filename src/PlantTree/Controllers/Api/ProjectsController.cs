@@ -25,14 +25,14 @@ namespace PlantTree.Controllers.Api
     public class ProjectsController : Controller
     {
         private readonly AppDbContext _context;
-        private readonly IMemoryCache _cache;
+        private readonly Repository _repository;
         private ILogger _logger;
 
-        public ProjectsController(AppDbContext context, ILoggerFactory factory, IMemoryCache cache)
+        public ProjectsController(AppDbContext context, Repository repository, ILogger<ProjectsController> logger)
         {
             _context = context;
-            _cache = cache;
-            _logger = factory.CreateLogger<ProjectsController>();
+            _repository = repository;
+            _logger = logger;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -60,7 +60,7 @@ namespace PlantTree.Controllers.Api
             if (pagesize <= 0)
                 return new ApiErrorResult($"Parameter {nameof(pagesize)} should be greater than 0");
 
-            var projects = await _context.Cache.GetProjects(page, pagesize);
+            var projects = await _repository.GetProjects(page, pagesize);
 
             if (userId == null)
                 return Ok(projects);
@@ -120,8 +120,7 @@ namespace PlantTree.Controllers.Api
                 .OrderBy(pu => pu.ProjectId)
                 .Skip((page - 1) * pagesize)
                 .Take(pagesize)
-                .Select(pu => pu.ProjectId)
-                ;
+                .Select(pu => pu.ProjectId);
 
             var userProjects = await _context.Projects
                 .Include(p => p.MainImage)
@@ -161,7 +160,7 @@ namespace PlantTree.Controllers.Api
         [HttpPut("{id}/like")]
         public async Task<IActionResult> MakeProjectFavourite([FromRoute] int id)
         {
-            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = SecurityRoutines.GetUserId(HttpContext);
             if (_context.ProjectUsers.Any(pu => pu.ProjectId == id && pu.UserId == userId))
             {
                 // Already added to favourites for this user
@@ -210,7 +209,8 @@ namespace PlantTree.Controllers.Api
         }
 
         // PUT: api/Projects/5
-        [HttpPut("{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPut("{id}")] 
         public async Task<IActionResult> PutProject([FromRoute] int id, [FromBody] Project project)
         {
             if (!ModelState.IsValid)
@@ -245,6 +245,7 @@ namespace PlantTree.Controllers.Api
         }
 
         // POST: api/Projects
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
         public async Task<IActionResult> PostProject([FromBody] Project project)
         {
@@ -274,6 +275,7 @@ namespace PlantTree.Controllers.Api
         }
 
         // DELETE: api/Projects/5
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject([FromRoute] int id)
         {

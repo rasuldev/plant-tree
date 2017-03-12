@@ -21,7 +21,7 @@ namespace test
                     .Options;
 
                 // Create the schema in the database
-                using (var context = new AppDbContext(Options, null))
+                using (var context = new AppDbContext(Options))
                 {
                     context.Database.EnsureCreated();
                 }
