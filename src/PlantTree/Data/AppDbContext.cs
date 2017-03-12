@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -22,8 +23,11 @@ namespace PlantTree.Data
         public AppDbContext(DbContextOptions<AppDbContext> options, AppDbContextCache cache)
             : base(options)
         {
-            cache.Context = this;
-            Cache = cache;
+            if (cache != null)
+            {
+                cache.Context = this;
+                Cache = cache;
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -85,6 +89,7 @@ namespace PlantTree.Data
         //{
         //    Cache = cache;
         //}
+        
 
         public AppDbContextCache Cache { get; protected set; }
 
