@@ -2,7 +2,7 @@
 {
     public class ApiUserError : ApiError
     {
-        public ApiUserError(string message) : base(message, ApiErrorTypes.User)
+        public ApiUserError(string message, string code) : base(message, code, ApiErrorTypes.User)
         {
         }
     }

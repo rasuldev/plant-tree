@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AuthTokenServer.Common;
+using Common.Errors;
 using Common.Results;
 using Common.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +25,7 @@ namespace PlantTree.Controllers.Api
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private ILogger _logger;
+        private readonly ILogger _logger;
         private readonly IEmailSender _emailSender;
 
         public AccountController(UserManager<ApplicationUser> userManager, 
@@ -50,14 +52,25 @@ namespace PlantTree.Controllers.Api
                 ClaimValue = UserRoles.Local
             };
             user.Claims.Add(claim);
-            var result = await _userManager.CreateAsync(user, model.Password);            
+            var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
                 await SendConfirmationEmail(user);
                 return new StatusCodeResult(StatusCodes.Status201Created);
             }
             else
-                return new CodeWithContentResult(result.Errors, StatusCodes.Status409Conflict);
+            {
+                var errors = new List<ApiError>();
+                foreach (var identityError in result.Errors)
+                {
+                    var errorType = ApiErrorTypes.System;
+                    if (identityError.Code == "DuplicateUserName")
+                        errorType = ApiErrorTypes.User;
+                    var apiError = new ApiError(identityError.Description, identityError.Code, errorType);
+                    errors.Add(apiError);
+                }
+                return new ApiErrorResult(errors.ToArray()) {StatusCode = StatusCodes.Status409Conflict };
+            }
             //return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
 

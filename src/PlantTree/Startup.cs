@@ -119,7 +119,7 @@ namespace PlantTree
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
+                //app.UseBrowserLink();
             }
             else
             {
@@ -128,13 +128,8 @@ namespace PlantTree
 
             app.UseStaticFiles();
 
-
-
-            app.UseWhen(context => context.Request.Path.StartsWithSegments(new PathString("/api")), branch =>
-            {
-                TokenServer.Configure<ApplicationUser>(branch, Path.Combine(env.ContentRootPath, Configuration["X509Certificate:path"]),
-                    Configuration["X509Certificate:password"]);
-            });
+            app.UseTokenServer(Path.Combine(env.ContentRootPath, Configuration["X509Certificate:path"]),
+                Configuration["X509Certificate:password"]);
 
             app.UseIdentity();
 

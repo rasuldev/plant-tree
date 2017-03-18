@@ -2,10 +2,13 @@
 using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
+using AspNet.Security.OpenIdConnect.Server;
 using AuthTokenServer.Common;
 using AuthTokenServer.Config;
 using AuthTokenServer.ExternalLogin;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,18 +40,43 @@ namespace AuthTokenServer
             services.AddSingleton<GoogleIdTokenHandler>();
         }
 
-        public static void Configure<TUser>(IApplicationBuilder app, string certificatePath, string certificatePassword) 
+        public static void Configure<TUser>(IApplicationBuilder app, string certificatePath, string certificatePassword, 
+            Func<ApplyTokenResponseContext, Task> onApplyTokenResponse = null) 
             where TUser: IdentityUser, new()
         {
             // Calling app.UseOAuthValidation() will register the middleware
             // in charge of validating the bearer tokens issued by ASOS.
             app.UseOAuthValidation();
 
+            //app.Use(async (context, next) =>
+            //{
+            //    context.Response.OnStarting(() =>
+            //    {
+            //        Console.WriteLine(context.GetOpenIdConnectResponse());
+            //        //context.SetOpenIdConnectResponse(null);
+            //        //var inst = context.Features.Get<OpenIdConnectServerFeature>();
+            //        //context.Response.Clear();
+            //        //context.Response.Body = new MemoryStream();
+            //        //context.Response.Body.SetLength(0);
+
+            //        //context.Response.WriteAsync("OK");
+            //        return Task.FromResult(0);
+            //    });
+
+
+            //    await next.Invoke();
+
+            //});
+
+
             app.UseOpenIdConnectServer(options =>
             {
                 // Create your own authorization provider by subclassing
                 // the OpenIdConnectServerProvider base class.
                 options.Provider = new AuthorizationProvider<TUser>();
+
+                if (onApplyTokenResponse != null)
+                    options.Provider.OnApplyTokenResponse = onApplyTokenResponse;
 
                 // Enable the authorization and token endpoints.
                 options.AuthorizationEndpointPath = "/api/connect/authorize" + "";
@@ -70,6 +98,8 @@ namespace AuthTokenServer
                 // options.AccessTokenHandler = new JwtSecurityTokenHandler();
                 //options.AccessTokenLifetime = TimeSpan.FromSeconds(5);
             });
+
+
         }
     }
 }

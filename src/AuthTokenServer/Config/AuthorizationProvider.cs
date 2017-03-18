@@ -113,9 +113,6 @@ namespace AuthTokenServer.Config
             }
         }
 
-
-
-
         public static AuthenticationTicket GenerateTicketWithToken(string userId, string userName)
         {
             // Create a new ClaimsIdentity containing the claims that

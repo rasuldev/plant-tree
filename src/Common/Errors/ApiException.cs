@@ -11,7 +11,7 @@ namespace Common.Errors
             Error = error;
         }
 
-        public ApiException(string message, ApiErrorTypes type = ApiErrorTypes.System): this(new ApiError(message, type))
+        public ApiException(string message, string code = null, ApiErrorTypes type = ApiErrorTypes.System): this(new ApiError(message, code, type))
         {
         }
     }

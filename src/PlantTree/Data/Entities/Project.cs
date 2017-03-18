@@ -14,11 +14,17 @@ namespace PlantTree.Data.Entities
         [Required, Display(Name="Название проекта")]
         public string Name { get; set; } 
         public string Tag { get; set; }
+        [Display(Name="Описание")]
         public string Description { get; set; }
+        [Display(Name = "Краткое описание")]
         public string ShortDescription { get; set; }
+        [Display(Name = "Цель")]
         public int Goal { get; set; } = 0;
+        [Display(Name = "Получено")]
         public int Reached { get; protected set; } = 0;
+        [Display(Name = "Стоимость одного дерева")]
         public decimal TreePrice { get; set; }
+        [Display(Name = "Статус")]
         public ProjectStatus Status { get; set; } = ProjectStatus.InProgress;
         public DateTime CreationDate { get; set; } = DateTime.Now;
         public DateTime ReachedDate { get; set; }

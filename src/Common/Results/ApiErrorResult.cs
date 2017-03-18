@@ -15,7 +15,7 @@ namespace Common.Results
             StatusCode = StatusCodes.Status400BadRequest;
         }
 
-        public ApiErrorResult(string message, ApiErrorTypes type = ApiErrorTypes.System) : this(new ApiError(message, type))
+        public ApiErrorResult(string message, string code = null, ApiErrorTypes type = ApiErrorTypes.System) : this(new ApiError(message, code, type))
         {
         }
 
