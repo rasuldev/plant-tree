@@ -27,8 +27,8 @@ namespace PlantTree.Data.Entities
         [Display(Name = "Статус")]
         public ProjectStatus Status { get; set; } = ProjectStatus.InProgress;
         public DateTime CreationDate { get; set; } = DateTime.Now;
-        public DateTime ReachedDate { get; set; }
-        public DateTime FinishedDate { get; set; }
+        public DateTime? ReachedDate { get; set; }
+        public DateTime? FinishedDate { get; set; }
 
         [IgnoreDataMember]
         public Currency Currency { get; set; } = Currency.Ruble;
