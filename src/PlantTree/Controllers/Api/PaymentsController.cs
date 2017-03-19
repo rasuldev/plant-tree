@@ -37,7 +37,7 @@ namespace PlantTree.Controllers.Api
             return new ApiErrorResult(result.Errors.ToArray());
         }
 
-
+        [NonAction]
         public async Task<OperationResult<int>> StartWebmoneyPay(int projectId, decimal amount, Currency? currency)
         {
             var transaction = new Transaction()

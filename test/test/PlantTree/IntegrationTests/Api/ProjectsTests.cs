@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using PlantTree;
 using PlantTree.Data;
@@ -46,10 +48,7 @@ namespace test.PlantTree.IntegrationTests.Api
                     services.AddScoped<AppDbContext>(provider =>
                     {
                         var context = new AppDbContext(_options);
-                        context.Add(new Project() {Id = 1, Name = "Посади дерево", Description = "Tree"});
-                        context.Add(new Project() { Id = 2, Name = "Посади дерево", Description = "Tree" });
-                        context.Add(new Project() { Id = 3, Name = "Посади дерево", Description = "Tree" });
-                        context.SaveChanges();
+                        Misc.PopulateContext(context);
                         return context;
                     });
 
@@ -72,7 +71,16 @@ namespace test.PlantTree.IntegrationTests.Api
             response.EnsureSuccessStatusCode();
 
             var responseContent = await response.Content.ReadAsStringAsync();
+            var projects = JsonConvert.DeserializeObject<Project[]>(responseContent);
+            Assert.AreEqual(20, projects.Length);
+            Assert.AreEqual(6, projects[5].Id);
+        }
 
+        [Test]
+        public async Task GetUserProjectsNonAuthTest()
+        {
+            var response = await _client.GetAsync("/api/projects/user");
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
     }
 }

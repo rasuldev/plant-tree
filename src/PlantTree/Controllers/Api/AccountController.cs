@@ -41,18 +41,23 @@ namespace PlantTree.Controllers.Api
         /// <summary>
         /// Accepts requests with Content-Type: application/json and body: {"email":"my@my.ru", "password": "mypassword"}
         /// </summary>
+        /// <response code="201">User created</response>
+        /// <response code="409">User created</response>
         /// <returns></returns>
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        [ProducesResponseType(typeof(ApiError[]), 409)]
+        [Consumes("application/json")]
+        public async Task<IActionResult> Register([FromBody] RegisterModel registerInfo)
         {
-            var user = new ApplicationUser {UserName = model.Email, Email = model.Email};
+            // TODO: add validation for registerInfo
+            var user = new ApplicationUser {UserName = registerInfo.Email, Email = registerInfo.Email};
             var claim = new IdentityUserClaim<string>()
             {
                 ClaimType = ClaimTypes.Role,
                 ClaimValue = UserRoles.Local
             };
             user.Claims.Add(claim);
-            var result = await _userManager.CreateAsync(user, model.Password);
+            var result = await _userManager.CreateAsync(user, registerInfo.Password);
             if (result.Succeeded)
             {
                 await SendConfirmationEmail(user);

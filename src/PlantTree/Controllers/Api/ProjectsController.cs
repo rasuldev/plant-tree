@@ -20,7 +20,7 @@ using PlantTree.Infrastructure.Common;
 namespace PlantTree.Controllers.Api
 {
     [Produces("application/json")]
-    [Route("api/Projects")]
+    [Route("api/projects")]
     [Authorize]
     public class ProjectsController : Controller
     {

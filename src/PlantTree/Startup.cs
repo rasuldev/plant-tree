@@ -22,8 +22,10 @@ using PlantTree.Data;
 using PlantTree.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.WebEncoders;
 using PlantTree.Infrastructure.Common;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace PlantTree
 {
@@ -79,6 +81,13 @@ namespace PlantTree
 
             // Add framework services.
             services.AddMvc();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+                var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "PlantTree.xml");
+                c.IncludeXmlComments(filePath);
+            });
 
             services.AddSingleton<IConfiguration>(Configuration);
 
@@ -157,6 +166,13 @@ namespace PlantTree
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            app.UseSwagger(options => 
+                options.RouteTemplate = "api-docs/{documentName}");
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/api-docs/v1", "My API V1");
             });
         }
     }

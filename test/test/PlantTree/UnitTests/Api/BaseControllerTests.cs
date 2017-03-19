@@ -19,6 +19,7 @@ namespace test.PlantTree.UnitTests.Api
         private SqliteTestDb _testDb;
         protected AppDbContext Context;
         protected T Controller;
+        public static ControllerContext EmptyControllerContext => new ControllerContext(new ActionContext(new DefaultHttpContext(), new RouteData(), new ControllerActionDescriptor()));
 
         [SetUp]
         public void Init()
