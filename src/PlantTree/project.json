@@ -71,9 +71,10 @@
       "**/*.cshtml",
       "appsettings.json",
       "web.config",
-      "Common.js",
-      "AuthTokenServer.js",
-      "nlog.config"
+      "Common.json",
+      "AuthTokenServer.json",
+      "nlog.config",
+      "cert.pfx"
     ]
   },
 

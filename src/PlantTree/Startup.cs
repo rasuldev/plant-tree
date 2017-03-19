@@ -24,6 +24,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.WebEncoders;
+using NLog.Extensions.Logging;
+using NLog.Web;
 using PlantTree.Infrastructure.Common;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -42,6 +44,7 @@ namespace PlantTree
                 .AddJsonFile("AuthTokenServer.json");
             Configuration = builder.Build();
             HostingEnvironment = env;
+            env.ConfigureNLog("nlog.config");
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -124,6 +127,10 @@ namespace PlantTree
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            //add NLog to ASP.NET Core
+            loggerFactory.AddNLog();
+            //add NLog.Web
+            app.AddNLogWeb();
 
             if (env.IsDevelopment())
             {
@@ -132,6 +139,7 @@ namespace PlantTree
             }
             else
             {
+                app.UseDeveloperExceptionPage();
                 app.UseExceptionHandler("/Home/Error");
             }
 
@@ -149,15 +157,18 @@ namespace PlantTree
                 app.UseGoogleAuthentication(serviceProvider.GetService<GoogleOptions>());
             });
 
-            if (Configuration["AutoMigrate"] == "true")
+            var logger = loggerFactory.CreateLogger<Startup>();
+            logger.LogInformation("Start migration");
+            if (Configuration["AutoMigrate"].ToLower() == "true")
             {
+                
                 using (
                     var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
                 {
                     //serviceScope.ServiceProvider.GetService<AppDbContext>().Database.EnsureDeleted();
                     //serviceScope.ServiceProvider.GetService<AppDbContext>().Database.EnsureCreated();
                     var dbc = serviceScope.ServiceProvider.GetService<AppDbContext>();
-                    //dbc.Database.Migrate();
+                    dbc.Database.Migrate();
                 }
             }
 
