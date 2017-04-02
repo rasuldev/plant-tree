@@ -217,6 +217,7 @@ namespace PlantTree.Controllers.Api
         // PUT: api/Projects/5
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPut("{id}")] 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PutProject([FromRoute] int id, [FromBody] Project project)
         {
             if (!ModelState.IsValid)
@@ -253,6 +254,7 @@ namespace PlantTree.Controllers.Api
         // POST: api/Projects
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PostProject([FromBody] Project project)
         {
             if (!ModelState.IsValid)
@@ -283,6 +285,7 @@ namespace PlantTree.Controllers.Api
         // DELETE: api/Projects/5
         [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete("{id}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> DeleteProject([FromRoute] int id)
         {
             if (!ModelState.IsValid)
