@@ -302,14 +302,6 @@ namespace PlantTree.Controllers.Api
             return Ok(project);
         }
 
-        [AllowAnonymous]
-        [HttpGet("test")]
-        public async Task<IActionResult> TestEmail([FromServices] IEmailSender emailSender)
-        {
-            await emailSender.SendEmailAsync("rasuldev@gmail.com", "Tooba.org", "Hello");
-            return Ok();
-        }
-
         private bool ProjectExists(int id)
         {
             return _context.Projects.Any(e => e.Id == id);
