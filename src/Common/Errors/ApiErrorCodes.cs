@@ -2,6 +2,7 @@
 {
     public static class ApiErrorCodes
     {
-        public static string InvalidGrant = "InvalidGrant";
+        public const string InvalidGrant = "InvalidGrant";
+        public const string MailSendError = "MailSendingError";
     }
 }

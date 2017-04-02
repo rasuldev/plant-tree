@@ -60,7 +60,14 @@ namespace PlantTree.Controllers.Api
             var result = await _userManager.CreateAsync(user, registerInfo.Password);
             if (result.Succeeded)
             {
-                await SendConfirmationEmail(user);
+                try
+                {
+                    await SendConfirmationEmail(user);
+                }
+                catch
+                {
+                    // Suppress error
+                }
                 return new StatusCodeResult(StatusCodes.Status201Created);
             }
             else
@@ -111,8 +118,16 @@ namespace PlantTree.Controllers.Api
 
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
             var callbackUrl = Url.Action("ResetPassword", "Account", new { mail = email, code = code }, protocol: HttpContext.Request.Scheme);
-            await _emailSender.SendEmailAsync(email, "Reset Password",
-               $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
+            try
+            {
+                await _emailSender.SendEmailAsync(email, "Reset Password",
+                $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
+            }
+            catch (ApiException e)
+            {
+                return new ApiErrorResult(e.Errors.ToArray());
+            }
+
             return Ok(new ApiSuccess("Forgot mail was sent."));
         }
 
@@ -123,7 +138,18 @@ namespace PlantTree.Controllers.Api
             var applicationUser = await _userManager.GetUserAsync(User);
             if (!await _userManager.HasPasswordAsync(applicationUser))
                 return new ApiErrorResult("No need to confirm email for social signed in user.");
-            await SendConfirmationEmail(applicationUser);
+            try
+            {
+                await SendConfirmationEmail(applicationUser);
+            }
+            catch (ApiException e)
+            {
+                return new ApiErrorResult(e.Errors.ToArray());
+            }
+            catch (Exception e)
+            {
+                return new ApiErrorResult(e.ToString());
+            }
             return Ok(new ApiSuccess("Confirmation email was sent"));
         }
 
@@ -132,8 +158,8 @@ namespace PlantTree.Controllers.Api
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-            await _emailSender.SendEmailAsync(user.Email, "Confirm your account on Tooba",
-                $"Please confirm your Tooba account by clicking this link: <a href='{callbackUrl}'>link</a>");
+            await _emailSender.SendEmailAsync(user.Email, "Confirm your account on PlantTree",
+                $"Please confirm your PlantTree account by clicking this link: <a href='{callbackUrl}'>link</a>");
         }
 
         [HttpGet("info")]
@@ -162,6 +188,7 @@ namespace PlantTree.Controllers.Api
 
         [HttpPost("photo")]
         //[Authorize]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> SetUserPhoto(IFormFile photo, [FromServices] ImageFactory imageFactory)
         {
             _logger.LogInformation(Request.Form.Keys.Count.ToString());

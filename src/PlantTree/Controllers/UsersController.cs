@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AuthTokenServer.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +12,7 @@ using PlantTree.Models.UsersViewModels;
 
 namespace PlantTree.Controllers
 {
+    [Authorize(Roles = UserRoles.Admin)]
     public class UsersController : Controller
     {
         private readonly AppDbContext _context;

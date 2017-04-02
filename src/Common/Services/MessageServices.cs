@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Common.Errors;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -68,7 +69,9 @@ namespace Common.Services
             catch (Exception e)
             {
                 _logger.LogError("Send mail error: \r\n" + e.ToString());
-                //throw;
+                var userError = new ApiUserError("Error occured while sending mail. Try again later.", ApiErrorCodes.MailSendError);
+                var systemError = new ApiSystemError(e.ToString(), ApiErrorCodes.MailSendError);
+                throw new ApiException(userError, systemError);
             }
         }
 

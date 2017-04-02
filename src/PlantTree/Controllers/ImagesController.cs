@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using AuthTokenServer.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -9,7 +10,7 @@ using PlantTree.Data.Entities;
 
 namespace PlantTree.Controllers
 {
-    [Authorize(Roles="Administrator")]
+    [Authorize(Roles = UserRoles.Admin)]
     public class ImagesController : Controller
     {
         private readonly AppDbContext _context;

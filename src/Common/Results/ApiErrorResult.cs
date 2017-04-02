@@ -7,7 +7,7 @@ namespace Common.Results
 {
     public class ApiErrorResult : ObjectResult
     {
-        public List<ApiError> Errors { get; protected set; }
+        public IReadOnlyList<ApiError> Errors { get; protected set; }
 
         public ApiErrorResult(params ApiError[] errors) : base(errors)
         {

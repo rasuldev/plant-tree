@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AuthTokenServer.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +15,7 @@ using PlantTree.Infrastructure.Common;
 
 namespace PlantTree.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = UserRoles.Admin)]
     public class ProjectsController : Controller
     {
         private readonly AppDbContext _context;
