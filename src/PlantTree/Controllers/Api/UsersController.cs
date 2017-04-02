@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AuthTokenServer.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,8 @@ namespace PlantTree.Controllers.Api
 {
     [Produces("application/json")]
     [Route("api/Users")]
-    [Authorize]
+    [Authorize(Roles = UserRoles.Admin)]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class UsersController : Controller
     {
         private readonly AppDbContext _context;
