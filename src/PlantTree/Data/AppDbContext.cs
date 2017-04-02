@@ -83,6 +83,9 @@ namespace PlantTree.Data
             builder.Entity<Project>().Property(p => p.Deleted).HasDefaultValue(false);
             builder.Entity<Project>().Property(p => p.DonatorsCount).HasDefaultValue(0);
 
+            builder.Entity<Project>().HasIndex(p => p.Status);
+            
+
         }
 
 

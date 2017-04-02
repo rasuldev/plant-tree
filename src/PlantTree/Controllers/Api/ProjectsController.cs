@@ -42,13 +42,15 @@ namespace PlantTree.Controllers.Api
         }
 
         // GET: api/Projects
-        // GET: api/Projects/page/3
-        // GET: api/Projects/page/3/pagesize/30
+        // GET: api/Projects/status/active
+        // GET: api/Projects/status/reached/page/3
+        // GET: api/Projects/status/active/page/3/pagesize/30
         [HttpGet]
-        [HttpGet("page/{page:int}")]
-        [HttpGet("page/{page:int}/pagesize/{pagesize:int}")]
+        [HttpGet("status/{status}")]
+        [HttpGet("status/{status}/page/{page:int}")]
+        [HttpGet("status/{status}/page/{page:int}/pagesize/{pagesize:int}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetProjects(int page = 1, int pagesize = 20)
+        public async Task<IActionResult> GetProjects(string status = "active", int page = 1, int pagesize = 20)
         {
             var userId = SecurityRoutines.GetUserId(HttpContext);
             // If for authenticated request userId is null (it means that access_token is wrong) we return 401.
@@ -59,8 +61,12 @@ namespace PlantTree.Controllers.Api
                 return new ApiErrorResult($"Parameter {nameof(page)} should be greater than 0");
             if (pagesize <= 0)
                 return new ApiErrorResult($"Parameter {nameof(pagesize)} should be greater than 0");
+            ProjectStatus projectStatus;
+            if (!Enum.TryParse(status, true, out projectStatus))
+                return new ApiErrorResult($"Wrong {nameof(status)}");
 
-            var projects = await _repository.GetProjects(page, pagesize);
+
+            var projects = await _repository.GetProjects(projectStatus, page, pagesize);
 
             if (userId == null)
                 return Ok(projects);

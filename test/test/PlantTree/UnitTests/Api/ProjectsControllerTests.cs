@@ -43,7 +43,7 @@ namespace test.PlantTree.UnitTests.Api
         {
             // Remove auth and user
             Controller.ControllerContext = EmptyControllerContext;
-            var result = await Controller.GetProjects(1, 20) as OkObjectResult;
+            var result = await Controller.GetProjects("active", 1, 20) as OkObjectResult;
             Assert.IsNotNull(result);
             Assert.AreEqual(200, result.StatusCode);
             var projects = result.Value as List<Project>;
@@ -57,7 +57,7 @@ namespace test.PlantTree.UnitTests.Api
         public async Task GetSecondPageProjectsNonAuthTest()
         {
             Controller.ControllerContext = EmptyControllerContext;
-            var result = await Controller.GetProjects(2, 10) as OkObjectResult;
+            var result = await Controller.GetProjects("active", 2, 10) as OkObjectResult;
             Assert.IsNotNull(result);
             Assert.AreEqual(200, result.StatusCode);
             var projects = result.Value as List<Project>;
@@ -70,7 +70,7 @@ namespace test.PlantTree.UnitTests.Api
         [Test]
         public async Task GetFirstPageProjectsForAuthUserTest()
         {
-            var result = await Controller.GetProjects(1, 20) as OkObjectResult;
+            var result = await Controller.GetProjects("active", 1, 20) as OkObjectResult;
             Assert.IsNotNull(result);
             Assert.AreEqual(200, result.StatusCode);
             var projects = result.Value as List<Project>;

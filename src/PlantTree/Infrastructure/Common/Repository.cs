@@ -21,7 +21,7 @@ namespace PlantTree.Infrastructure.Common
         private readonly ILogger<Repository> _logger;
         private readonly int[] _cachePageList = { 1, 2, 3 };
         private readonly int[] _cachePageSizeList = { 10, 15, 20, 25, 30 };
-        
+
         public Repository(AppDbContext context, IMemoryCache cache, ILogger<Repository> logger)
         {
             _cache = cache;
@@ -47,18 +47,18 @@ namespace PlantTree.Infrastructure.Common
             //return _cachePageList.Contains(page) && _cachePageSizeList.Contains(pagesize);
         }
 
-        private static string GetProjectsCacheKey(int page, int pagesize)
+        private static string GetProjectsCacheKey(ProjectStatus status, int page, int pagesize)
         {
-            return $"projects-page{page}-size{pagesize}";
+            return $"projects-status-{status}-page{page}-size{pagesize}";
         }
 
-        public async Task<List<Project>> GetProjects(int page, int pagesize)
+        public async Task<List<Project>> GetProjects(ProjectStatus status, int page, int pagesize)
         {
             List<Project> projects;
-            var cacheKey = GetProjectsCacheKey(page, pagesize);
+            var cacheKey = GetProjectsCacheKey(status, page, pagesize);
             if (_cache.TryGetValue(cacheKey, out projects)) return projects;
 
-            projects = await _context.Projects
+            projects = await _context.Projects.Where(p => p.Status == status)
                 .Include(p => p.MainImage).Include(p => p.OtherImages).Include(p => p.ProjectUsers)
                 .Skip((page - 1) * pagesize)
                 .Take(pagesize)
@@ -77,11 +77,12 @@ namespace PlantTree.Infrastructure.Common
         /// <summary>
         /// Removes cache entry for projects of specified page and pagesize
         /// </summary>
+        /// <param name="status"></param>
         /// <param name="page"></param>
         /// <param name="pagesize"></param>
-        public void InvalidateProjectsCache(int page, int pagesize)
+        public void InvalidateProjectsCache(ProjectStatus status, int page, int pagesize)
         {
-            var cacheKey = GetProjectsCacheKey(page, pagesize);
+            var cacheKey = GetProjectsCacheKey(status, page, pagesize);
             _cache.Remove(cacheKey);
         }
 
@@ -95,7 +96,10 @@ namespace PlantTree.Infrastructure.Common
             {
                 foreach (var pagesize in _cachePageSizeList)
                 {
-                    InvalidateProjectsCache(page, pagesize);
+                    foreach (ProjectStatus status in Enum.GetValues(typeof(ProjectStatus)))
+                    {
+                        InvalidateProjectsCache(status, page, pagesize);
+                    }
                 }
             }
         }
