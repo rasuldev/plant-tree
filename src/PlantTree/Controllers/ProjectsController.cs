@@ -188,7 +188,7 @@ namespace PlantTree.Controllers
         private void CreateOrEditInit()
         {
             var statusItems = Enum.GetValues(typeof(ProjectStatus)).Cast<ProjectStatus>().Select(x => new { code = x, value = x.ToString() });
-            ViewData["StatusList"] = new SelectList(statusItems, "code", "value", ProjectStatus.InProgress);
+            ViewData["StatusList"] = new SelectList(statusItems, "code", "value", ProjectStatus.Active);
         }
     }
 }

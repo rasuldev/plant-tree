@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using PlantTree.Infrastructure.Common;
 
 namespace PlantTree.Data.Entities
@@ -25,7 +26,8 @@ namespace PlantTree.Data.Entities
         [Display(Name = "Стоимость одного дерева")]
         public decimal TreePrice { get; set; }
         [Display(Name = "Статус")]
-        public ProjectStatus Status { get; set; } = ProjectStatus.InProgress;
+        [IgnoreDataMember]
+        public ProjectStatus Status { get; set; } = ProjectStatus.Active;
         public DateTime CreationDate { get; set; } = DateTime.Now;
         public DateTime? ReachedDate { get; set; }
         public DateTime? FinishedDate { get; set; }
@@ -67,6 +69,10 @@ namespace PlantTree.Data.Entities
         [NotMapped]
         public int? LikesCount => ProjectUsers?.Count;
 
+        [NotMapped]
+        [JsonProperty("status")]
+        public string StatusJson => Status.ToString().ToLower();
+
         /// <summary>
         /// For authorized requests show whether this project was liked by current user
         /// </summary>
@@ -89,6 +95,6 @@ namespace PlantTree.Data.Entities
 
     public enum ProjectStatus
     {
-        InProgress = 10, Reached = 50, Finished = 100
+        Active = 10, Reached = 50, Finished = 100
     }
 }

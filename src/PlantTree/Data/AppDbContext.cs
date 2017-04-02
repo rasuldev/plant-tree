@@ -78,7 +78,7 @@ namespace PlantTree.Data
             // Set properties
             builder.Entity<Project>().Property(p => p.Currency).HasDefaultValue(Currency.Ruble);
             builder.Entity<Project>().Property(p => p.Reached).HasDefaultValue(0);
-            builder.Entity<Project>().Property(p => p.Status).HasDefaultValue(ProjectStatus.InProgress);
+            builder.Entity<Project>().Property(p => p.Status).HasDefaultValue(ProjectStatus.Active);
             builder.Entity<Project>().Property(p => p.CreationDate).HasDefaultValueSql("getdate()");
             builder.Entity<Project>().Property(p => p.Deleted).HasDefaultValue(false);
             builder.Entity<Project>().Property(p => p.DonatorsCount).HasDefaultValue(0);
