@@ -7,6 +7,7 @@ using PlantTree.Data;
 using PlantTree.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace PlantTree.Infrastructure.Common
@@ -58,11 +59,18 @@ namespace PlantTree.Infrastructure.Common
             var cacheKey = GetProjectsCacheKey(status, page, pagesize);
             if (_cache.TryGetValue(cacheKey, out projects)) return projects;
 
-            projects = await _context.Projects.Where(p => p.Status == status)
-                .Include(p => p.MainImage).Include(p => p.OtherImages).Include(p => p.ProjectUsers)
-                .Skip((page - 1) * pagesize)
-                .Take(pagesize)
-                .ToListAsync();
+            Expression<Func<Project, bool>> statusCond;
+            // Completed means that project is reached or finished (i.e. not active) 
+            if (status == ProjectStatus.Completed)
+                statusCond = p => p.Status != ProjectStatus.Active;
+            else
+                statusCond = p => p.Status == status;
+
+            projects = await _context.Projects.Where(statusCond)
+            .Include(p => p.MainImage).Include(p => p.OtherImages).Include(p => p.ProjectUsers)
+            .Skip((page - 1) * pagesize)
+            .Take(pagesize)
+            .ToListAsync();
 
             // Place in cache only first several pages 
             // We cache only limited amount of pagesizes to protect from cache-overflow attack

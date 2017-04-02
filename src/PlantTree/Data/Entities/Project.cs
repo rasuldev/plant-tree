@@ -95,6 +95,11 @@ namespace PlantTree.Data.Entities
 
     public enum ProjectStatus
     {
-        Active = 10, Reached = 50, Finished = 100
+        Active = 10,
+        Reached = 50,
+        Finished = 100,
+        // Indicates that project either Reached, or Finished. 
+        // There is no such status in database. 
+        Completed = Reached + Finished
     }
 }

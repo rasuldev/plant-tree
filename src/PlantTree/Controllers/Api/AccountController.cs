@@ -28,7 +28,7 @@ namespace PlantTree.Controllers.Api
         private readonly ILogger _logger;
         private readonly IEmailSender _emailSender;
 
-        public AccountController(UserManager<ApplicationUser> userManager, 
+        public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager, ILoggerFactory loggerFactory, IEmailSender emailSender)
         {
             _userManager = userManager;
@@ -50,7 +50,7 @@ namespace PlantTree.Controllers.Api
         public async Task<IActionResult> Register([FromBody] RegisterModel registerInfo)
         {
             // TODO: add validation for registerInfo
-            var user = new ApplicationUser {UserName = registerInfo.Email, Email = registerInfo.Email};
+            var user = new ApplicationUser { UserName = registerInfo.Email, Email = registerInfo.Email };
             var claim = new IdentityUserClaim<string>()
             {
                 ClaimType = ClaimTypes.Role,
@@ -69,12 +69,12 @@ namespace PlantTree.Controllers.Api
                 foreach (var identityError in result.Errors)
                 {
                     var errorType = ApiErrorTypes.System;
-                    if (identityError.Code == "DuplicateUserName")
+                    if (identityError.Code == "DuplicateUserName" || identityError.Code == "PasswordTooShort")
                         errorType = ApiErrorTypes.User;
                     var apiError = new ApiError(identityError.Description, identityError.Code, errorType);
                     errors.Add(apiError);
                 }
-                return new ApiErrorResult(errors.ToArray()) {StatusCode = StatusCodes.Status409Conflict };
+                return new ApiErrorResult(errors.ToArray()) { StatusCode = StatusCodes.Status409Conflict };
             }
             //return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
@@ -94,7 +94,7 @@ namespace PlantTree.Controllers.Api
             var result = await _userManager.ChangePasswordAsync(applicationUser, current, newpass);
             if (!result.Succeeded)
             {
-                return new ApiErrorResult(string.Join(";",result.Errors.Select(e => e.Description)));
+                return new ApiErrorResult(string.Join(";", result.Errors.Select(e => e.Description)));
             }
 
             return Ok();

@@ -68,7 +68,7 @@ namespace Common.Services
             catch (Exception e)
             {
                 _logger.LogError("Send mail error: \r\n" + e.ToString());
-                throw;
+                //throw;
             }
         }
 
