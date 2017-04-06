@@ -24,5 +24,13 @@ namespace PlantTree.Infrastructure.Common
             await userManager.UpdateAsync(user);
         }
 
+        public static T? StringToEnum<T>(string s) where T : struct
+        {
+            T enumVar;
+            if (!Enum.TryParse(s, true, out enumVar) || !Enum.IsDefined(typeof(T), enumVar))
+                return null;
+            return enumVar;
+        }
+
     }
 }

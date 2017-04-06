@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AuthTokenServer.Common;
+using Common.Errors;
 using Common.Results;
 using Common.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -45,11 +46,22 @@ namespace PlantTree.Controllers.Api
         // GET: api/Projects/status/active
         // GET: api/Projects/status/reached/page/3
         // GET: api/Projects/status/active/page/3/pagesize/30
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="page"></param>
+        /// <param name="pagesize"></param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Bad request</response>
+        /// <returns></returns>
         [HttpGet]
         [HttpGet("status/{status}")]
         [HttpGet("status/{status}/page/{page:int}")]
         [HttpGet("status/{status}/page/{page:int}/pagesize/{pagesize:int}")]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(List<Project>), 200)]
+        [ProducesResponseType(typeof(List<ApiError>), 400)]
         public async Task<IActionResult> GetProjects(string status = "active", int page = 1, int pagesize = 20)
         {
             var userId = SecurityRoutines.GetUserId(HttpContext);
@@ -61,12 +73,11 @@ namespace PlantTree.Controllers.Api
                 return new ApiErrorResult($"Parameter {nameof(page)} should be greater than 0");
             if (pagesize <= 0)
                 return new ApiErrorResult($"Parameter {nameof(pagesize)} should be greater than 0");
-            ProjectStatus projectStatus;
-            if (!Enum.TryParse(status, true, out projectStatus))
+            var projectStatus = Misc.StringToEnum<ProjectStatus>(status);
+            if (!projectStatus.HasValue)
                 return new ApiErrorResult($"Wrong {nameof(status)}");
 
-
-            var projects = await _repository.GetProjects(projectStatus, page, pagesize);
+            var projects = await _repository.GetProjects(projectStatus.Value, page, pagesize);
 
             if (userId == null)
                 return Ok(projects);
