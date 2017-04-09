@@ -27,7 +27,10 @@ using Microsoft.Extensions.WebEncoders;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using PlantTree.Infrastructure.Common;
+using PlantTree.Infrastructure.Payments;
+using PlantTree.Infrastructure.Swagger;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace PlantTree
 {
@@ -90,6 +93,8 @@ namespace PlantTree
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
                 var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "PlantTree.xml");
                 c.IncludeXmlComments(filePath);
+                c.DescribeAllEnumsAsStrings();
+                c.DocumentFilter<ApiConnectSchemaFilter>(new Func<string>(()=>GlobalConf.Host));
             });
 
             services.AddSingleton<IConfiguration>(Configuration);
@@ -101,6 +106,7 @@ namespace PlantTree
 
             TokenServer.ConfigureServices(services, Configuration);
             Services.ConfigureServices(services);
+            services.AddTransient<IProcessor, Processor>();
             ConfigureImageServices(services);
         }
 
@@ -125,6 +131,7 @@ namespace PlantTree
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
+            GlobalConf.DetectAndSaveHostUrl(app);
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             //add NLog to ASP.NET Core
@@ -186,4 +193,6 @@ namespace PlantTree
             });
         }
     }
+
+    
 }

@@ -1,5 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace PlantTree.Data.Entities
 {
@@ -13,8 +16,10 @@ namespace PlantTree.Data.Entities
         public int Id { get; set; }
         [Required]
         public string UserId { get; set; }
+        [IgnoreDataMember]
         public virtual ApplicationUser User { get; set; }
         public int ProjectId { get; set; }
+        [IgnoreDataMember]
         public virtual Project Project { get; set; }
         public decimal Amount  { get; set; }
         public int TreeCount { get; set; }
@@ -22,7 +27,12 @@ namespace PlantTree.Data.Entities
         public Currency? Currency { get; set; } = Entities.Currency.Ruble;
         public DateTime CreationDate { get; set; } = DateTime.Now;
         public DateTime? FinishedDate { get; set; }
+        [IgnoreDataMember]
         public TransactionStatus Status { get; set; } = TransactionStatus.Pending;
+
+        [NotMapped]
+        [JsonProperty("status")]
+        public string StatusJson => Status.ToString().ToLower();
         public string PaymentMethod { get; set; }
     }
 

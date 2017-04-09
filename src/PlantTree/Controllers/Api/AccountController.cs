@@ -12,7 +12,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using PlantTree.Data;
 using PlantTree.Data.Entities;
 using PlantTree.Infrastructure.Common;
 using PlantTree.Models.Api;
@@ -24,14 +26,16 @@ namespace PlantTree.Controllers.Api
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly AppDbContext _context;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger _logger;
         private readonly IEmailSender _emailSender;
 
-        public AccountController(UserManager<ApplicationUser> userManager,
+        public AccountController(UserManager<ApplicationUser> userManager, AppDbContext context,
             SignInManager<ApplicationUser> signInManager, ILoggerFactory loggerFactory, IEmailSender emailSender)
         {
             _userManager = userManager;
+            _context = context;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
@@ -101,7 +105,7 @@ namespace PlantTree.Controllers.Api
             var result = await _userManager.ChangePasswordAsync(applicationUser, current, newpass);
             if (!result.Succeeded)
             {
-                return new ApiErrorResult(string.Join(";", result.Errors.Select(e => e.Description)));
+                return new ApiErrorResult(result.Errors.Select(e => new ApiError(e.Description, e.Code)).ToArray());
             }
 
             return Ok();
@@ -164,32 +168,84 @@ namespace PlantTree.Controllers.Api
 
         [HttpGet("info")]
         [Authorize]
+        [ProducesResponseType(typeof(DetailedUserInfo), 200)]
         public async Task<IActionResult> GetUserInfo()
         {
-            var user = await _userManager.GetUserAsync(User);
-            return Ok(new
+            //await _userManager.GetUserAsync(User);
+            var user = await _context.ApplicationUser
+                .Include(u => u.Transactions)
+                .SingleOrDefaultAsync(u => u.Id == _userManager.GetUserId(User));
+            return Ok(new DetailedUserInfo()
             {
-                name = user.Name,
-                email = user.Email,
-                isEmailConfirmed = user.EmailConfirmed,
-                gender = user.Gender?.ToString(),
-                birthday = user.Birthday?.ToString("dd.MM.yyyy"),
-                //likes = user.ProjectUsers.Count
+                Name = user.Name,
+                LastName = user.LastName,
+                Email = user.Email,
+                IsEmailConfirmed = user.EmailConfirmed,
+                Gender = user.Gender?.ToString(),
+                Birthday = user.Birthday?.ToString("dd.MM.yyyy"),
+                Donated = user.Donated,
+                DonatedProjectsCount = user.DonatedProjectsCount,
+                Transactions = user.Transactions,
             });
         }
 
+        /// <summary>
+        /// DateTime format - "dd.MM.yyyy"
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         [HttpPut("info")]
         [Authorize]
-        public async Task<IActionResult> SetUserInfo([FromBody] UserInfoModel info)
+        public async Task<IActionResult> SetUserInfo([FromBody] UserInfo info)
         {
             await Misc.SetUserInfo(HttpContext, info);
             return NoContent();
         }
 
         [HttpPost("photo")]
+        [Authorize]
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<IActionResult> SetUserPhoto([FromBody] IFormFile photo, [FromServices] ImageFactory imageFactory)
+        {
+            //_logger.LogInformation(Request.Form.Keys.Count.ToString());
+            //_logger.LogInformation(String.Concat(Request.Form.Keys));
+            //_logger.LogInformation($"Photo action: name: {photo?.Name}, length: {photo?.Length}, photo is null: {photo == null}");
+            if (photo == null) return BadRequest();
+
+            var createImageTask = imageFactory.CreateUserImage(photo);
+            var getUserTask = _userManager.GetUserAsync(User);
+
+            var image = await createImageTask;
+            var user = await getUserTask;
+            user.Photo = image;
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded) return Ok();
+            return new ApiErrorResult(result.Errors.Select(e => new ApiError(e.Description, e.Code)).ToArray());
+        }
+
+        [HttpDelete("photo")]
+        [Authorize]
+        public async Task<IActionResult> DeleteUserPhoto([FromServices] ImageFactory imageFactory)
+        {
+            //_logger.LogInformation(Request.Form.Keys.Count.ToString());
+            //_logger.LogInformation(String.Concat(Request.Form.Keys));
+            //_logger.LogInformation($"Photo action: name: {photo?.Name}, length: {photo?.Length}, photo is null: {photo == null}");
+            var user = await _context.Users.Include(u => u.Photo).SingleAsync(u => u.Id == _userManager.GetUserId(User));
+            if (user.PhotoId.HasValue)
+            {
+                imageFactory.RemoveImageFiles(user.Photo);
+                _context.Remove(user.Photo);
+                user.Photo = null;
+                await _context.SaveChangesAsync();
+            }
+            return Ok();
+        }
+
+
+        [HttpPost("phototest")]
         //[Authorize]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> SetUserPhoto(IFormFile photo, [FromServices] ImageFactory imageFactory)
+        public async Task<IActionResult> SetUserPhotoTest(IFormFile photo, [FromServices] ImageFactory imageFactory)
         {
             _logger.LogInformation(Request.Form.Keys.Count.ToString());
             _logger.LogInformation(String.Concat(Request.Form.Keys));

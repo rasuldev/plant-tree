@@ -1,22 +1,25 @@
 ﻿using System;
 using System.Globalization;
 using System.Threading.Tasks;
+using AuthTokenServer.ExternalLogin;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using PlantTree.Data.Entities;
 using PlantTree.Models.Api;
+using UserInfo = PlantTree.Models.Api.UserInfo;
 
 namespace PlantTree.Infrastructure.Common
 {
     public static class Misc
     {
-        public static async Task SetUserInfo(HttpContext context, UserInfoModel info)
+        public static async Task SetUserInfo(HttpContext context, UserInfo info)
         {
             var userManager = context.RequestServices.GetService<UserManager<ApplicationUser>>();
             var user = await userManager.GetUserAsync(context.User);
             user.Name = info.Name;
-            user.Gender = info.Gender;
+            user.LastName = info.LastName;
+            user.Gender = Misc.StringToEnum<Gender>(info.Gender); ;
             if (string.IsNullOrEmpty(info.Birthday))
                 user.Birthday = null;
             else

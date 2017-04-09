@@ -29,16 +29,16 @@ namespace PlantTree.Controllers.Api
         }
 
         [HttpPost("webmoney")]
-        public async Task<IActionResult> WebMoney(int projectId, decimal amount, Currency? currency)
+        public async Task<IActionResult> WebMoney(int projectId, decimal amount, int treeCount, Currency? currency)
         {
-            var result = await StartWebmoneyPay(projectId, amount, currency);
+            var result = await StartWebmoneyPay(projectId, amount, treeCount, currency);
             if (result.Succeeded)
                 return Ok(result.Result);
             return new ApiErrorResult(result.Errors.ToArray());
         }
 
         [NonAction]
-        public async Task<OperationResult<int>> StartWebmoneyPay(int projectId, decimal amount, Currency? currency)
+        public async Task<OperationResult<int>> StartWebmoneyPay(int projectId, decimal amount, int treeCount, Currency? currency)
         {
             var transaction = new Transaction()
             {
@@ -46,7 +46,8 @@ namespace PlantTree.Controllers.Api
                 Amount = amount,
                 Currency = currency,
                 PaymentMethod = PaymentMethods.WebMoney.ToString(),
-                UserId = SecurityRoutines.GetUserId(HttpContext)
+                UserId = SecurityRoutines.GetUserId(HttpContext),
+                TreeCount = treeCount
             };
             var errors = VerifyTransaction(transaction);
             if (errors.Any())

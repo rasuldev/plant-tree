@@ -36,11 +36,11 @@ namespace PlantTree.Controllers.Api
             _logger = logger;
         }
 
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            GlobalConf.Host = $"{Request.Scheme}://{Request.Host}";
-            base.OnActionExecuting(context);
-        }
+        //public override void OnActionExecuting(ActionExecutingContext context)
+        //{
+        //    GlobalConf.Host = $"{Request.Scheme}://{Request.Host}";
+        //    base.OnActionExecuting(context);
+        //}
 
         // GET: api/Projects
         // GET: api/Projects/status/active
@@ -94,12 +94,18 @@ namespace PlantTree.Controllers.Api
         // GET: api/Projects/5
         [HttpGet("{id}")]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(Project), 200)]
         public async Task<IActionResult> GetProject([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            var userId = SecurityRoutines.GetUserId(HttpContext);
+            // If for authenticated request userId is null (it means that access_token is wrong) we return 401.
+            if (SecurityRoutines.IsRequestAuthorized(HttpContext) && userId == null)
+                return Unauthorized();
 
             Project project = await _context.Projects
                 .Include(p => p.MainImage)
@@ -110,6 +116,13 @@ namespace PlantTree.Controllers.Api
             {
                 return NotFound();
             }
+
+            if (userId != null)
+            {
+                var isLiked = await _context.ProjectUsers.AnyAsync(p => p.ProjectId == project.Id && p.UserId == userId);
+                project.IsLiked = isLiked;
+            }
+
             return Ok(project);
         }
 

@@ -49,5 +49,16 @@ namespace Common.Images
             //var name = Path.GetFileNameWithoutExtension(filename);
             return $"image_{DateTime.Now:yyyy-MM-ddTHH-mm-ss-ff}_{Path.GetRandomFileName().Replace(".", "")}";
         }
+
+        /// <summary>
+        /// Removes image's files (small and regular)
+        /// </summary>
+        /// <param name="image"></param>
+        /// <returns></returns>
+        public void RemoveImageFiles(CommonImage image)
+        {
+            File.Delete(ServerPathFor(image.Url));
+            File.Delete(ServerPathFor(image.UrlSmall));
+        }
     }
 }
