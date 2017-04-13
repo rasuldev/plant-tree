@@ -23,6 +23,7 @@ namespace PlantTree.Infrastructure.Common
                     // var settings = branch.ApplicationServices.GetService<JsonSerializerSettings>();
                     // JsonSerializer.Create(settings).;
                     // Intercept response to change default error format
+                    if (context.Error == null) return;
                     context.HttpContext.Response.Headers.Add("Content-Type", "application/json; charset=utf-8");
                     context.HttpContext.Response.StatusCode = 400;
                     var errorType = ApiErrorTypes.System;

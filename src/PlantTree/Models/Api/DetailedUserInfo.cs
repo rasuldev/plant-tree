@@ -15,5 +15,7 @@ namespace PlantTree.Models.Api
         public decimal Donated { get; set; }
         public int DonatedProjectsCount { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
+        public string PhotoUrlSmall { get; set; }
+        public string PhotoUrl { get; set; }
     }
 }

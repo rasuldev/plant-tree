@@ -94,7 +94,16 @@ namespace PlantTree
                 var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "PlantTree.xml");
                 c.IncludeXmlComments(filePath);
                 c.DescribeAllEnumsAsStrings();
+                c.IgnoreObsoleteProperties();
+                c.OperationFilter<FileUploadOperationFilter>();
+                c.OperationFilter<AuthorizationOperationFilter>();
                 c.DocumentFilter<ApiConnectSchemaFilter>(new Func<string>(()=>GlobalConf.Host));
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificHeaders",
+                    builder => builder.WithHeaders("Authorization"));
             });
 
             services.AddSingleton<IConfiguration>(Configuration);
@@ -191,6 +200,8 @@ namespace PlantTree
             {
                 c.SwaggerEndpoint("/api-docs/v1", "My API V1");
             });
+
+            app.UseCors("AllowSpecificHeaders");
         }
     }
 

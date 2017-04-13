@@ -186,6 +186,8 @@ namespace PlantTree.Controllers.Api
                 Donated = user.Donated,
                 DonatedProjectsCount = user.DonatedProjectsCount,
                 Transactions = user.Transactions,
+                PhotoUrl = user.PhotoUrl,
+                PhotoUrlSmall = user.PhotoUrlSmall
             });
         }
 
@@ -205,7 +207,7 @@ namespace PlantTree.Controllers.Api
         [HttpPost("photo")]
         [Authorize]
         //[ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> SetUserPhoto([FromBody] IFormFile photo, [FromServices] ImageFactory imageFactory)
+        public async Task<IActionResult> SetUserPhoto(IFormFile photo, [FromServices] ImageFactory imageFactory)
         {
             //_logger.LogInformation(Request.Form.Keys.Count.ToString());
             //_logger.LogInformation(String.Concat(Request.Form.Keys));
@@ -223,6 +225,12 @@ namespace PlantTree.Controllers.Api
             return new ApiErrorResult(result.Errors.Select(e => new ApiError(e.Description, e.Code)).ToArray());
         }
 
+        /// <summary>
+        /// Deletes current user photo
+        /// </summary>
+        /// <param name="imageFactory"></param>
+        /// <response code="204">Success</response>
+        /// <returns></returns>
         [HttpDelete("photo")]
         [Authorize]
         public async Task<IActionResult> DeleteUserPhoto([FromServices] ImageFactory imageFactory)
@@ -238,7 +246,7 @@ namespace PlantTree.Controllers.Api
                 user.Photo = null;
                 await _context.SaveChangesAsync();
             }
-            return Ok();
+            return NoContent();
         }
 
 
