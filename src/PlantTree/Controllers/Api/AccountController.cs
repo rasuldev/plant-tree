@@ -174,6 +174,7 @@ namespace PlantTree.Controllers.Api
             //await _userManager.GetUserAsync(User);
             var user = await _context.ApplicationUser
                 .Include(u => u.Transactions)
+                .Include(u => u.Photo)
                 .SingleOrDefaultAsync(u => u.Id == _userManager.GetUserId(User));
             return Ok(new DetailedUserInfo()
             {
