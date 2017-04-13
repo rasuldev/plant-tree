@@ -34,7 +34,9 @@
     "NLog.Config": "4.4.3",
     "Microsoft.Extensions.Caching.Memory": "1.1.0",
     "Common": "1.0.0",
-    "Swashbuckle.AspNetCore": "1.0.0-rc3"
+    "Swashbuckle.AspNetCore": "1.0.0-rc3",
+    "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": "1.1.0",
+    "Microsoft.VisualStudio.Web.CodeGeneration.Tools": "1.1.0-preview4-final"
   },
 
   "tools": {
