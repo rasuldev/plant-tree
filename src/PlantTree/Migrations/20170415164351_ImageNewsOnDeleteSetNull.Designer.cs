@@ -9,9 +9,10 @@ using PlantTree.Data.Entities;
 namespace PlantTree.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170415164351_ImageNewsOnDeleteSetNull")]
+    partial class ImageNewsOnDeleteSetNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
