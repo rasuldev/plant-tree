@@ -39,6 +39,8 @@ namespace PlantTree.Data.Entities
                         return "/images/projects";
                     case ImageKind.User:
                         return "/images/users";
+                    case ImageKind.News:
+                        return "/images/news";
                     default:
                         return "/images";
                 }

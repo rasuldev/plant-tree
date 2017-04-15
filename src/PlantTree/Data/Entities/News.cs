@@ -15,6 +15,8 @@ namespace PlantTree.Data.Entities
         public string Text { get; set; }
         [Required]
         public string ShortText { get; set; }
+        [ForeignKey("Photo")]
+        public int? PhotoId { get; set; }
         [IgnoreDataMember]
         public virtual Image Photo { get; set; }
         // for json
@@ -25,6 +27,7 @@ namespace PlantTree.Data.Entities
 
         public DateTime Date { get; set; } = DateTime.Now;
         public int? ProjectId { get; set; }
+        [IgnoreDataMember]
         public virtual Project Project { get; set; }
     }
 }

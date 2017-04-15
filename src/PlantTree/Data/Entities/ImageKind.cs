@@ -2,6 +2,6 @@
 {
     public enum ImageKind
     {
-        Common, Project, User
+        Common, Project, User, News
     }
 }

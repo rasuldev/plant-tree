@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PlantTree.Data;
 using PlantTree.Data.Entities;
 
@@ -18,10 +20,12 @@ namespace PlantTree.Controllers.Api
     public class ImagesController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<ImagesController> _logger;
 
-        public ImagesController(AppDbContext context)
+        public ImagesController(AppDbContext context, ILogger<ImagesController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Images
@@ -130,9 +134,18 @@ namespace PlantTree.Controllers.Api
             }
 
             _context.Images.Remove(image);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+                throw;
+            }
 
-            return Ok(image);
+
+            return Ok();
         }
 
         private bool ImageExists(int id)

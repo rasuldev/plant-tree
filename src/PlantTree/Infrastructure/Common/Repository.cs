@@ -120,5 +120,25 @@ namespace PlantTree.Infrastructure.Common
             }
         }
         #endregion
+
+        public async Task<List<News>> GetNews(int? projectId, int page, int pagesize)
+        {
+            var news = _context.News
+                .Include(n => n.Photo)
+                .Select(n => new News()
+                {
+                    Id = n.Id,
+                    Date = n.Date,
+                    PhotoId = n.PhotoId,
+                    Title = n.Title,
+                    ShortText = n.ShortText,
+                    ProjectId = n.ProjectId,
+                    Photo = n.Photo
+                });
+            if (projectId.HasValue)
+                news = news.Where(n => n.ProjectId == projectId);
+            news = news.Skip((page - 1) * pagesize).Take(pagesize);
+            return await news.ToListAsync();
+        }
     }
 }

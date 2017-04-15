@@ -42,7 +42,7 @@ namespace PlantTree.Infrastructure.Common
 
         public async Task<Image> CreateNewsImage(IFormFile imgFile)
         {
-            return await CreateImage(imgFile, ImageKind.Common);
+            return await CreateImage(imgFile, ImageKind.News);
         }
     }
 }

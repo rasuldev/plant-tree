@@ -74,6 +74,7 @@ namespace PlantTree.Data
             // News
             builder.Entity<News>().HasOne(n => n.Project).WithMany(p => p.News).OnDelete(DeleteBehavior.Cascade);
             builder.Entity<News>().HasIndex(n => n.Date);
+            builder.Entity<News>().HasOne(n => n.Photo).WithMany().OnDelete(DeleteBehavior.SetNull);
 
             // Set properties
             builder.Entity<Project>().Property(p => p.Currency).HasDefaultValue(Currency.Ruble);

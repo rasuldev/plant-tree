@@ -10,7 +10,7 @@
     <div class="form-horizontal">
         <h4>News</h4>
         <hr />
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="All" class="text-danger"></div>
         
         @await Html.PartialAsync("_CreateOrEdit", Model)
 

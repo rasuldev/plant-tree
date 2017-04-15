@@ -131,7 +131,9 @@ namespace PlantTree
                 [ImageKind.Project] =
                     new ImageSize(Configuration["Images:Project:Width"], Configuration["Images:Project:Height"]),
                 [ImageKind.User] =
-                    new ImageSize(Configuration["Images:User:Width"], Configuration["Images:User:Height"])
+                    new ImageSize(Configuration["Images:User:Width"], Configuration["Images:User:Height"]),
+                [ImageKind.News] =
+                    new ImageSize(Configuration["Images:News:Width"], Configuration["Images:News:Height"])
             };
             var imageFactory = new ImageFactory(HostingEnvironment, smallImageSizes);
             services.AddSingleton(imageFactory);
