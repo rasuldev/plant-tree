@@ -23,7 +23,7 @@ namespace PlantTree.Data.Entities
         [NotMapped]
         public string PhotoUrl => Photo?.Url != null ? GlobalConf.Host + Photo?.Url : "";
         [NotMapped]
-        public string PhotoSmall => Photo?.UrlSmall != null ? GlobalConf.Host + Photo?.UrlSmall : "";
+        public string PhotoUrlSmall => Photo?.UrlSmall != null ? GlobalConf.Host + Photo?.UrlSmall : "";
 
         public DateTime Date { get; set; } = DateTime.Now;
         public int? ProjectId { get; set; }

@@ -15,6 +15,7 @@ using PlantTree.Infrastructure.Common;
 
 namespace PlantTree.Controllers.Api
 {
+    [Produces("application/json")]
     [Route("api/news")]
     public class NewsController : Controller
     {
@@ -30,11 +31,11 @@ namespace PlantTree.Controllers.Api
         }
 
         [HttpGet]
-        [HttpGet("/page/{page:int}")]
-        [HttpGet("/page/{page:int}/pagesize/{pagesize:int}")]
-        [HttpGet("/project/{projectId:int}")]
-        [HttpGet("/project/{projectId:int}/page/{page:int}")]
-        [HttpGet("/project/{projectId:int}/page/{page:int}/pagesize/{pagesize:int}")]
+        [HttpGet("page/{page:int}")]
+        [HttpGet("page/{page:int}/pagesize/{pagesize:int}")]
+        [HttpGet("project/{projectId:int}")]
+        [HttpGet("project/{projectId:int}/page/{page:int}")]
+        [HttpGet("project/{projectId:int}/page/{page:int}/pagesize/{pagesize:int}")]
         [ProducesResponseType(typeof(List<News>), 200)]
         [ProducesResponseType(typeof(List<ApiError>), 400)]
         public async Task<IActionResult> GetNews(int? projectId = null, int page = 1, int pagesize = 5)
