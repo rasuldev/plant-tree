@@ -9,6 +9,7 @@ AuthTokenServer.json
 cert.pfx
 DataProtectionKeys/
 **/wwwroot/images/projects/
+**/wwwroot/images/
 
 # User-specific files
 *.suo

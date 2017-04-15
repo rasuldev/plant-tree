@@ -2,11 +2,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using AuthTokenServer.Common;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PlantTree.Data;
 using PlantTree.Data.Entities;
+using PlantTree.Infrastructure.Common;
 
 namespace PlantTree.Controllers
 {
@@ -14,10 +16,12 @@ namespace PlantTree.Controllers
     public class NewsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ImageFactory _imageFactory;
 
-        public NewsController(AppDbContext context)
+        public NewsController(AppDbContext context, ImageFactory imageFactory)
         {
-            _context = context;    
+            _context = context;
+            _imageFactory = imageFactory;
         }
 
         // GET: News
@@ -56,16 +60,26 @@ namespace PlantTree.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Date,ProjectId,ShortText,Text,Title")] News news)
+        public async Task<IActionResult> Create([Bind("Id,Date,ProjectId,ShortText,Text,Title")] News news, IFormFile photo)
         {
             if (ModelState.IsValid)
             {
+                await ProcessImages(news, photo);
                 _context.Add(news);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", news.ProjectId);
             return View(news);
+        }
+
+        private async Task ProcessImages(News news, IFormFile postedImage)
+        {
+            if (postedImage != null)
+            {
+                var image = await _imageFactory.CreateNewsImage(postedImage);
+                news.Photo = image;
+            }
         }
 
         // GET: News/Edit/5
@@ -76,7 +90,9 @@ namespace PlantTree.Controllers
                 return NotFound();
             }
 
-            var news = await _context.News.SingleOrDefaultAsync(m => m.Id == id);
+            var news = await _context.News
+                .Include(n => n.Photo)
+                .SingleOrDefaultAsync(m => m.Id == id);
             if (news == null)
             {
                 return NotFound();
@@ -90,7 +106,7 @@ namespace PlantTree.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Date,ProjectId,ShortText,Text,Title")] News news)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Date,ProjectId,ShortText,Text,Title")] News news, IFormFile photo)
         {
             if (id != news.Id)
             {
@@ -101,6 +117,7 @@ namespace PlantTree.Controllers
             {
                 try
                 {
+                    await ProcessImages(news, photo);
                     _context.Update(news);
                     await _context.SaveChangesAsync();
                 }
