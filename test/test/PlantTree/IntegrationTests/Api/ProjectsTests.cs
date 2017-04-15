@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
@@ -35,8 +36,15 @@ namespace test.PlantTree.IntegrationTests.Api
             _options = _testdb.Options;
 
             _server = new TestServer(new WebHostBuilder()
-                .UseStartup<Startup>()
-                .UseContentRoot(@"..\..\..\..\..\src\PlantTree")
+                
+                .UseContentRoot(@"..\..\..\..\..\..\src\PlantTree")
+                
+                //.Configure(app =>
+                //{
+                //    var conf = app.ApplicationServices.GetRequiredService<IConfiguration>();
+                //    var auto = conf["AutoMigrate"];
+
+                //})
                 .ConfigureServices(services =>
                 {
                     var dbDescriptors = services.Where(s => s.ServiceType == typeof(AppDbContext));
@@ -51,8 +59,10 @@ namespace test.PlantTree.IntegrationTests.Api
                         Misc.PopulateContext(context);
                         return context;
                     });
-
-                }));
+                })
+                .UseSetting("AutoMigrate", "false")
+                .UseStartup<Startup>()
+                );
             _client = _server.CreateClient();
         }
 

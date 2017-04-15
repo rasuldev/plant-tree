@@ -2,11 +2,11 @@
   "version": "1.0.0",
 
   "dependencies": {
-    "AspNet.Security.OAuth.Validation": "1.0.0-alpha3-final",
-    "AspNet.Security.OpenIdConnect.Server": "1.0.0-beta7-final",
-    "Microsoft.AspNetCore.Authentication.Facebook": "1.1.0",
-    "Microsoft.AspNetCore.Authentication.Google": "1.1.0",
-    "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.1.0",
+    "AspNet.Security.OAuth.Validation": "1.0.0-rtm-0241",
+    "AspNet.Security.OpenIdConnect.Server": "1.0.0-rtm-1183",
+    "Microsoft.AspNetCore.Authentication.Facebook": "1.1.1",
+    "Microsoft.AspNetCore.Authentication.Google": "1.1.1",
+    "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.1.1",
     "NLog.Web.AspNetCore": "4.3.1",
     "System.Net.Http": "4.3.1"
   },

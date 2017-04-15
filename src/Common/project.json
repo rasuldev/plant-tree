@@ -3,9 +3,9 @@
 
   "dependencies": {
     "ImageProcessorCore": "1.0.0-alpha1095",
-    "MailKit": "1.10.2",
-    "Microsoft.AspNetCore.Mvc": "1.0.1",
-    "NETStandard.Library": "1.6.0",
+    "MailKit": "1.14.2",
+    "Microsoft.AspNetCore.Mvc": "1.1.2",
+    "NETStandard.Library": "1.6.1",
     "NLog.Web.AspNetCore": "4.3.1"
   },
 
