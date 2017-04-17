@@ -1,13 +1,12 @@
 ﻿using System;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using PlantTree.Data;
 
-namespace test
+namespace test.Infrastructure
 {
-    public class SqliteTestDb : IDisposable
+    public class SqliteTestDb<T> : ITestDb<T> where T : DbContext
     {
-        public DbContextOptions<AppDbContext> Options { get; protected set; }
+        public DbContextOptions<T> Options { get; protected set; }
         private readonly SqliteConnection _connection;
 
         public SqliteTestDb()
@@ -16,12 +15,12 @@ namespace test
             _connection.Open();
             try
             {
-                Options = new DbContextOptionsBuilder<AppDbContext>()
+                Options = new DbContextOptionsBuilder<T>()
                     .UseSqlite(_connection)
                     .Options;
 
                 // Create the schema in the database
-                using (var context = new AppDbContext(Options))
+                using (var context = CreateContext())
                 {
                     context.Database.EnsureCreated();
                 }
@@ -31,6 +30,11 @@ namespace test
                 this.Dispose();
                 throw;
             }
+        }
+
+        public T CreateContext()
+        {
+            return (T) Activator.CreateInstance(typeof(T), Options);
         }
 
         public void Dispose()

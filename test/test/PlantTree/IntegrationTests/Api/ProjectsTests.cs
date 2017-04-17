@@ -10,68 +10,34 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using PlantTree;
 using PlantTree.Data;
 using PlantTree.Data.Entities;
 using PlantTree.Infrastructure.Common;
+using test.Infrastructure.TestServers;
 
 namespace test.PlantTree.IntegrationTests.Api
 {
     public class ProjectsTests
     {
-        private TestServer _server;
+        private ITestServer _server;
         private HttpClient _client;
-        private SqliteTestDb _testdb;
-        private DbContextOptions<AppDbContext> _options;
 
         [OneTimeSetUp]//[SetUp] 
         public void Init()
         {
-            var dir = Directory.GetCurrentDirectory();
-            Console.WriteLine(Directory.GetCurrentDirectory());
-
-            _testdb = new SqliteTestDb();
-            _options = _testdb.Options;
-
-            _server = new TestServer(new WebHostBuilder()
-                
-                .UseContentRoot(@"..\..\..\..\..\..\src\PlantTree")
-                
-                //.Configure(app =>
-                //{
-                //    var conf = app.ApplicationServices.GetRequiredService<IConfiguration>();
-                //    var auto = conf["AutoMigrate"];
-
-                //})
-                .ConfigureServices(services =>
-                {
-                    var dbDescriptors = services.Where(s => s.ServiceType == typeof(AppDbContext));
-                    foreach (var descriptor in dbDescriptors)
-                    {
-                        services.Remove(descriptor);
-                    }
-                    //services.AddDbContext<AppDbContext>(options => options.Us);
-                    services.AddScoped<AppDbContext>(provider =>
-                    {
-                        var context = new AppDbContext(_options);
-                        Misc.PopulateContext(context);
-                        return context;
-                    });
-                })
-                .UseSetting("AutoMigrate", "false")
-                .UseStartup<Startup>()
-                );
-            _client = _server.CreateClient();
+            _server = new MyLocalTestServer();
+            //_server = new RemoteTestServer();
+            _client = _server.GetClient();
         }
 
         [OneTimeTearDown]//[TearDown]
         public void CleanUp()
         {
-            _client.Dispose();
             _server.Dispose();
-            _testdb.Dispose();
         }
 
         [Test]

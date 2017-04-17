@@ -175,7 +175,7 @@ namespace PlantTree
                 app.UseGoogleAuthentication(serviceProvider.GetService<GoogleOptions>());
             });
 
-            if (Configuration["AutoMigrate"].ToLower() == "true")
+            if (Configuration["AutoMigrate"].ToLower() == "true" && !env.IsEnvironment("TEST"))
             {
                 var logger = loggerFactory.CreateLogger<Startup>();
                 logger.LogInformation("Start migration");
