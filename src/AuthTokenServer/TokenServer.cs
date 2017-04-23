@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using AspNet.Security.OpenIdConnect.Primitives;
 using AspNet.Security.OpenIdConnect.Server;
 using AuthTokenServer.Common;
 using AuthTokenServer.Config;
@@ -19,6 +20,15 @@ namespace AuthTokenServer
     {
         public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
+            // Configure Identity to use the same JWT claims as OpenIddict instead
+            // of the legacy WS-Federation claims it uses by default (ClaimTypes),
+            // which saves you from doing the mapping in your authorization controller.
+            services.Configure<IdentityOptions>(options =>
+                        {
+                            options.ClaimsIdentity.UserNameClaimType = OpenIdConnectConstants.Claims.Name;
+                            options.ClaimsIdentity.UserIdClaimType = OpenIdConnectConstants.Claims.Subject;
+                            options.ClaimsIdentity.RoleClaimType = OpenIdConnectConstants.Claims.Role;
+                        });
             // External login configuration
             var client = new HttpClient { Timeout = TimeSpan.FromSeconds(60) };
             services.AddSingleton(client);
@@ -40,9 +50,9 @@ namespace AuthTokenServer
             services.AddSingleton<GoogleIdTokenHandler>();
         }
 
-        public static void Configure<TUser>(IApplicationBuilder app, string certificatePath, string certificatePassword, 
-            Func<ApplyTokenResponseContext, Task> onApplyTokenResponse = null) 
-            where TUser: IdentityUser, new()
+        public static void Configure<TUser>(IApplicationBuilder app, string certificatePath, string certificatePassword,
+            Func<ApplyTokenResponseContext, Task> onApplyTokenResponse = null)
+            where TUser : IdentityUser, new()
         {
             // Calling app.UseOAuthValidation() will register the middleware
             // in charge of validating the bearer tokens issued by ASOS.

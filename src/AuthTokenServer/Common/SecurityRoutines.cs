@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AspNet.Security.OpenIdConnect.Primitives;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -23,7 +24,7 @@ namespace AuthTokenServer.Common
 
         public static string GetUserId(HttpContext context)
         {
-            return context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            return context.User.FindFirst(OpenIdConnectConstants.Claims.Subject)?.Value;
         }
 
         public static string GetUserEmail(HttpContext context)

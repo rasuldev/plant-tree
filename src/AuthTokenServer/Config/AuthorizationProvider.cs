@@ -123,11 +123,13 @@ namespace AuthTokenServer.Config
             // Copy the unique identifier associated with the logged-in user to the new identity.
             // Note: the name identifier is always included in both identity and
             // access tokens, even if an explicit destination is not specified.
-            identity.AddClaim(ClaimTypes.NameIdentifier, userId);
-
+            //identity.AddClaim(ClaimTypes.NameIdentifier, userId);
+            identity.AddClaim(OpenIdConnectConstants.Claims.Subject, userId, 
+                OpenIdConnectConstants.Destinations.AccessToken, 
+                OpenIdConnectConstants.Destinations.IdentityToken);
             // When adding custom claims, you MUST specify one or more destinations.
             // Read "part 7" for more information about custom claims and scopes.
-            identity.AddClaim(ClaimTypes.Name, userName,
+            identity.AddClaim(OpenIdConnectConstants.Claims.Name, userName,
                 OpenIdConnectConstants.Destinations.AccessToken,
                 OpenIdConnectConstants.Destinations.IdentityToken);
 

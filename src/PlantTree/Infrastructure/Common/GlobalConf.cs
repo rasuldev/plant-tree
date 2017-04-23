@@ -13,7 +13,7 @@ namespace PlantTree.Infrastructure.Common
                 if (Host == "")
                 {
                     // TODO check version with // in the beginning
-                    Host = context.Request.Host.Value.ToString();
+                    Host = "http://" + context.Request.Host.Value.ToString();
                 }
                 await next();
             });
