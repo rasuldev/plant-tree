@@ -27,7 +27,7 @@ namespace AuthTokenServer
                         {
                             options.ClaimsIdentity.UserNameClaimType = OpenIdConnectConstants.Claims.Name;
                             options.ClaimsIdentity.UserIdClaimType = OpenIdConnectConstants.Claims.Subject;
-                            options.ClaimsIdentity.RoleClaimType = OpenIdConnectConstants.Claims.Role;
+                            //options.ClaimsIdentity.RoleClaimType = OpenIdConnectConstants.Claims.Role;
                         });
             // External login configuration
             var client = new HttpClient { Timeout = TimeSpan.FromSeconds(60) };

@@ -27,12 +27,7 @@ namespace PlantTree.Data.Entities
         public Currency? Currency { get; set; } = Entities.Currency.Ruble;
         public DateTime CreationDate { get; set; } = DateTime.Now;
         public DateTime? FinishedDate { get; set; }
-        [IgnoreDataMember]
         public TransactionStatus Status { get; set; } = TransactionStatus.Pending;
-
-        [NotMapped]
-        [JsonProperty("status")]
-        public string StatusJson => Status.ToString().ToLower();
         public string PaymentMethod { get; set; }
     }
 

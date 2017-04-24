@@ -6,6 +6,7 @@ using PlantTree.Infrastructure.Payments;
 
 namespace PlantTree.Controllers.Api
 {
+    [Area("api")]
     [Produces("application/json")]
     [Route("api/PaymentsHandler")]
     public class PaymentsHandlerController : Controller

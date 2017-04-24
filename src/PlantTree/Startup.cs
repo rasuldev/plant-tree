@@ -24,6 +24,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.WebEncoders;
+using Newtonsoft.Json.Converters;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using PlantTree.Infrastructure.Common;
@@ -86,7 +87,7 @@ namespace PlantTree
                 .ProtectKeysWithDpapi();
 
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(o => o.SerializerSettings.Converters.Add(new StringEnumConverter(true)));
 
             services.AddSwaggerGen(c =>
             {

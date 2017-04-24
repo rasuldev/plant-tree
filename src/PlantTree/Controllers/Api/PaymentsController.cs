@@ -14,6 +14,7 @@ using PlantTree.Infrastructure.Payments;
 
 namespace PlantTree.Controllers.Api
 {
+    [Area("api")]
     [Produces("application/json")]
     [Route("api/Payments")]
     [Authorize]

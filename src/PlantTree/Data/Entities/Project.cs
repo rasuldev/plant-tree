@@ -26,13 +26,11 @@ namespace PlantTree.Data.Entities
         [Display(Name = "Стоимость одного дерева")]
         public decimal TreePrice { get; set; }
         [Display(Name = "Статус")]
-        [IgnoreDataMember]
         public ProjectStatus Status { get; set; } = ProjectStatus.Active;
         public DateTime CreationDate { get; set; } = DateTime.Now;
         public DateTime? ReachedDate { get; set; }
         public DateTime? FinishedDate { get; set; }
 
-        [IgnoreDataMember]
         public Currency Currency { get; set; } = Currency.Ruble;
         public bool Deleted { get; set; } = false;
         //var likeUserIds: [Int] = []
@@ -62,16 +60,12 @@ namespace PlantTree.Data.Entities
         public IEnumerable<string> OtherImagesUrl => OtherImages?.Select(i => GlobalConf.Host + i.Url);
         [NotMapped]
         public IEnumerable<string> OtherImagesUrlSmall => OtherImages?.Select(i => GlobalConf.Host + i.UrlSmall);
-
-        [NotMapped]
-        public string CurrencyName => Currency.ToString();
-
         [NotMapped]
         public int? LikesCount => ProjectUsers?.Count;
 
-        [NotMapped]
-        [JsonProperty("status")]
-        public string StatusJson => Status.ToString().ToLower();
+        //[NotMapped]
+        //[JsonProperty("status")]
+        //public string StatusJson => Status.ToString().ToLower();
 
         /// <summary>
         /// For authorized requests show whether this project was liked by current user

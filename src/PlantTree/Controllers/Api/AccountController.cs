@@ -21,6 +21,7 @@ using PlantTree.Models.Api;
 
 namespace PlantTree.Controllers.Api
 {
+    [Area("api")]
     [Produces("application/json")]
     [Route("api/account")]
     public class AccountController : Controller

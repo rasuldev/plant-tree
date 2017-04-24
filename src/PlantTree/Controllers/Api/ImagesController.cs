@@ -13,6 +13,7 @@ using PlantTree.Data.Entities;
 
 namespace PlantTree.Controllers.Api
 {
+    [Area("api")]
     [Produces("application/json")]
     [Route("api/Images")]
     [Authorize(Roles = UserRoles.Admin)]
