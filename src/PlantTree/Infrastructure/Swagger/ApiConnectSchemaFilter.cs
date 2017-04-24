@@ -18,7 +18,7 @@ namespace PlantTree.Infrastructure.Swagger
 
         public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
         {
-            swaggerDoc.Host = _getHost();
+            swaggerDoc.Host = _getHost().Replace("http://","").Replace("https://","");
 
             // Swagger generates several methods for one action /api/projects 
             // such as /api/projects/status/{status}, /api/projects/status/{status}/page/{page} etc.
