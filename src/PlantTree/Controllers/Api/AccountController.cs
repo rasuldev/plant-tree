@@ -106,7 +106,9 @@ namespace PlantTree.Controllers.Api
             var result = await _userManager.ChangePasswordAsync(applicationUser, current, newpass);
             if (!result.Succeeded)
             {
-                return new ApiErrorResult(result.Errors.Select(e => new ApiError(e.Description, e.Code)).ToArray());
+                return new ApiErrorResult(result.Errors.Select(e =>
+                    new ApiError(e.Description, e.Code, 
+                                 e.Code == "PasswordMismatch" ? ApiErrorTypes.User : ApiErrorTypes.System)).ToArray());
             }
 
             return Ok();

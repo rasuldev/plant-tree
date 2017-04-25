@@ -222,7 +222,7 @@ namespace PlantTree.Controllers.Api
         [HttpPut("{id}/dislike")]
         public async Task<IActionResult> RemoveProjectFromFavourites([FromRoute] int id)
         {
-            var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = SecurityRoutines.GetUserId(HttpContext);
             var link = await _context.ProjectUsers.SingleOrDefaultAsync(pu => pu.ProjectId == id && pu.UserId == userId);
             if (link != null)
             {
