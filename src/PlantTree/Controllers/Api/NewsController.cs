@@ -39,7 +39,7 @@ namespace PlantTree.Controllers.Api
         [HttpGet("project/{projectId:int}/page/{page:int}/pagesize/{pagesize:int}")]
         [ProducesResponseType(typeof(List<News>), 200)]
         [ProducesResponseType(typeof(List<ApiError>), 400)]
-        public async Task<IActionResult> GetNews(int? projectId = null, int page = 1, int pagesize = 5)
+        public async Task<IActionResult> GetNews(int? projectId = null, int page = 1, int pagesize = 10)
         {
             if (page <= 0)
                 return new ApiErrorResult($"Parameter {nameof(page)} should be greater than 0");

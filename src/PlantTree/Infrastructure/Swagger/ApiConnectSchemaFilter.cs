@@ -22,11 +22,14 @@ namespace PlantTree.Infrastructure.Swagger
 
             // Swagger generates several methods for one action /api/projects 
             // such as /api/projects/status/{status}, /api/projects/status/{status}/page/{page} etc.
-            // Here we remove this reduntant methods
+            // Here we remove this reduntant methods 
             var apiMethods = swaggerDoc.Paths
-                .Where(p => p.Key.StartsWith("/api/projects/status") || p.Key.StartsWith("/api/projects/user/page"))
+                .Where(p => 
+                    p.Key.StartsWith("/api/projects/status") || p.Key.StartsWith("/api/projects/user/page") // projects
+                    || p.Key.StartsWith("/api/news/page") || p.Key.StartsWith("/api/news/project"))
                 .Select(p => p.Key)
                 .ToList();
+
             foreach (var key in apiMethods)
             {
                 swaggerDoc.Paths.Remove(key);
