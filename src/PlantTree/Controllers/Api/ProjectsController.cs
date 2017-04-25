@@ -111,6 +111,7 @@ namespace PlantTree.Controllers.Api
             Project project = await _context.Projects
                 .Include(p => p.MainImage)
                 .Include(p => p.OtherImages)
+                .Include(p => p.ProjectUsers)
                 .SingleOrDefaultAsync(m => m.Id == id);
 
             if (project == null)
