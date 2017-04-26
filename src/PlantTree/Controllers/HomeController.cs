@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AuthTokenServer.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PlantTree.Data;
+using PlantTree.Infrastructure.Common;
 
 namespace PlantTree.Controllers
 {
@@ -30,6 +34,13 @@ namespace PlantTree.Controllers
         public IActionResult Error()
         {
             return View();
+        }
+
+        [Authorize(Roles = UserRoles.Admin)]
+        public IActionResult Seed([FromServices] AppDbContext context)
+        {
+            DbSeeder.Seed(context);
+            return Ok("done");
         }
     }
 }
