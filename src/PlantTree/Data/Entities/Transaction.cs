@@ -29,6 +29,8 @@ namespace PlantTree.Data.Entities
         public DateTime? FinishedDate { get; set; }
         public TransactionStatus Status { get; set; } = TransactionStatus.Pending;
         public string PaymentMethod { get; set; }
+        [NotMapped]
+        public string ProjectTitle => Project?.Name;
     }
 
     public enum TransactionStatus
