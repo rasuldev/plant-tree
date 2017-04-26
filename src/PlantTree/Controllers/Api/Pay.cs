@@ -16,14 +16,14 @@ namespace PlantTree.Controllers.Api
 {
     [Area("api")]
     [Produces("application/json")]
-    [Route("api/Payments")]
+    [Route("api/pay")]
     [Authorize]
-    public class PaymentsController : Controller
+    public class Pay : Controller
     {
-        private readonly ILogger<PaymentsController> _logger;
+        private readonly ILogger<Pay> _logger;
         private readonly IProcessor _processor;
 
-        public PaymentsController(ILogger<PaymentsController> logger, IProcessor processor)
+        public Pay(ILogger<Pay> logger, IProcessor processor)
         {
             _logger = logger;
             _processor = processor;

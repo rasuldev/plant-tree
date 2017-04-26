@@ -176,7 +176,6 @@ namespace PlantTree.Controllers.Api
         {
             //await _userManager.GetUserAsync(User);
             var user = await _context.ApplicationUser
-                .Include(u => u.Transactions)
                 .Include(u => u.Photo)
                 .SingleOrDefaultAsync(u => u.Id == _userManager.GetUserId(User));
             return Ok(new DetailedUserInfo()
@@ -189,7 +188,6 @@ namespace PlantTree.Controllers.Api
                 Birthday = user.Birthday?.ToString("dd.MM.yyyy"),
                 Donated = user.Donated,
                 DonatedProjectsCount = user.DonatedProjectsCount,
-                Transactions = user.Transactions,
                 PhotoUrl = user.PhotoUrl,
                 PhotoUrlSmall = user.PhotoUrlSmall
             });
