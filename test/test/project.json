@@ -11,7 +11,8 @@
     "Microsoft.EntityFrameworkCore.Sqlite": "1.1.1",
     "NUnit": "3.6.1",
     "RichardSzalay.MockHttp": "1.5.0",
-    "Moq": "4.7.8"
+    "Moq": "4.7.8",
+    "FluentAssertions": "4.19.2"
   },
 
   "testRunner": "nunit",

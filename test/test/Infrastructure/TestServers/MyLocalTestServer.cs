@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PlantTree;
 using PlantTree.Data;
+using PlantTree.Infrastructure.Common;
 
 namespace test.Infrastructure.TestServers
 {
@@ -16,10 +17,14 @@ namespace test.Infrastructure.TestServers
 
         public MyLocalTestServer() 
         {
-            _testdb = new SqliteTestDb<AppDbContext>();
-            var context = _testdb.CreateContext();
-            Misc.PopulateContext(context);
-            _testServer = new LocalTestServer<Startup, AppDbContext>(@"..\..\..\..\..\..\src\PlantTree", context);
+            _testdb = new SqliteTestDb<AppDbContext>(DbSeeder.PopulateContext);
+            _testServer = new LocalTestServer<Startup, AppDbContext>(@"..\..\..\..\..\..\src\PlantTree",
+                () =>
+                {
+                    _testdb.ResetDb();
+                    var context = _testdb.CreateContext();
+                    return context;
+                });
         }
 
         public HttpClient GetClient()

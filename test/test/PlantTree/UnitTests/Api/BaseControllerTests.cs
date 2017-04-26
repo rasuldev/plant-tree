@@ -11,6 +11,7 @@ using PlantTree.Controllers.Api;
 using PlantTree.Data;
 using PlantTree.Infrastructure.Common;
 using test.Infrastructure;
+using DbSeeder = test.Infrastructure.DbSeeder;
 
 namespace test.PlantTree.UnitTests.Api
 {
@@ -32,7 +33,7 @@ namespace test.PlantTree.UnitTests.Api
             {
                 UseCache = false
             };
-            Misc.PopulateContext(Context);
+            DbSeeder.PopulateContext(Context);
             Controller = CreateController(Context, repo);
         }
 

@@ -14,7 +14,7 @@ namespace test.Infrastructure.TestServers
     {
         private readonly TestServer _server;
         private readonly HttpClient _client;
-        public LocalTestServer(string contentRootPath, TContext context)
+        public LocalTestServer(string contentRootPath, Func<TContext> createContext)
         {
             //var dir = Directory.GetCurrentDirectory();
             //Console.WriteLine(Directory.GetCurrentDirectory());
@@ -25,7 +25,7 @@ namespace test.Infrastructure.TestServers
                 .UseStartup<TStartup>()
                 .ConfigureServices(services =>
                 {
-                    services.AddScoped<TContext>(provider => context);
+                    services.AddScoped<TContext>(provider => createContext());
                 }));
 
             _client = _server.CreateClient();

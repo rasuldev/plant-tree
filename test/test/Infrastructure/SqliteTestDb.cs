@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,10 +7,17 @@ namespace test.Infrastructure
 {
     public class SqliteTestDb<T> : ITestDb<T> where T : DbContext
     {
+        private readonly Action<T> _seeder;
         public DbContextOptions<T> Options { get; protected set; }
-        private readonly SqliteConnection _connection;
+        private SqliteConnection _connection;
 
-        public SqliteTestDb()
+        public SqliteTestDb(Action<T> seeder = null)
+        {
+            _seeder = seeder;
+            Init();
+        }
+
+        void Init()
         {
             _connection = new SqliteConnection("DataSource=:memory:");
             _connection.Open();
@@ -23,6 +31,7 @@ namespace test.Infrastructure
                 using (var context = CreateContext())
                 {
                     context.Database.EnsureCreated();
+                    _seeder?.Invoke(context);
                 }
             }
             catch
@@ -30,6 +39,13 @@ namespace test.Infrastructure
                 this.Dispose();
                 throw;
             }
+        }
+
+        public void ResetDb()
+        {
+            if (_connection.State != ConnectionState.Closed)
+                _connection.Close();
+            Init();
         }
 
         public T CreateContext()
