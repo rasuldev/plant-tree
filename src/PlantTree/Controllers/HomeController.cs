@@ -6,6 +6,7 @@ using AuthTokenServer.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PlantTree.Data;
+using PlantTree.Data.Entities;
 using PlantTree.Infrastructure.Common;
 
 namespace PlantTree.Controllers
@@ -40,6 +41,10 @@ namespace PlantTree.Controllers
         public IActionResult Seed([FromServices] AppDbContext context)
         {
             DbSeeder.Seed(context);
+            //var random = new Random();
+            //var transactions = context.Transactions.Where(t => t.Status == TransactionStatus.Success && t.FinishedDate == null).ToList();
+            //transactions.ForEach(t => t.FinishedDate = t.CreationDate + TimeSpan.FromDays(random.NextDouble() * 30));
+            //context.SaveChanges();
             return Ok("done");
         }
     }
