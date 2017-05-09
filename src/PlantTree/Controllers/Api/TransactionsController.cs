@@ -39,7 +39,8 @@ namespace PlantTree.Controllers.Api
             var transactions = 
                 await _context.Transactions
                               .Include(t => t.Project)
-                              .Where(t => t.UserId == userId)
+                              .Where(t => t.UserId == userId && t.Status == TransactionStatus.Success)
+                              .OrderByDescending(t => t.FinishedDate)
                               .Skip((page - 1) * pagesize).Take(pagesize).AsNoTracking()
                               //.Select(t => new {t, t.Project.Name })
                               .ToListAsync();

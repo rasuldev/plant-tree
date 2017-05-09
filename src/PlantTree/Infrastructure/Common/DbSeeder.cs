@@ -24,11 +24,10 @@ namespace PlantTree.Infrastructure.Common
                     PaymentMethod = GetRandomElement(new[] {"visa", "yandex", "webmoney"}),
                     TreeCount = random.Next(1, 10),
                     UserId = GetRandomElement(context.Users.Select(u => u.Id).ToArray()),
-                    CreationDate = DateTime.Now - TimeSpan.FromDays(random.NextDouble() * 30)
+                    CreationDate = DateTime.Now - TimeSpan.FromDays(random.NextDouble() * 60)
                 };
-                transaction.FinishedDate = transaction.CreationDate + TimeSpan.FromDays(10 + random.NextDouble() * 30);
-                if (transaction.FinishedDate > DateTime.Now)
-                    transaction.FinishedDate = null;
+                if (transaction.Status == TransactionStatus.Success)
+                    transaction.FinishedDate = transaction.CreationDate + TimeSpan.FromDays(random.NextDouble() * 60);
                 transactions.Add(transaction);
             }
 
