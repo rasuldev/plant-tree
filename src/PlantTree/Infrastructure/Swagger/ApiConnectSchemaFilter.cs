@@ -35,6 +35,14 @@ namespace PlantTree.Infrastructure.Swagger
                 swaggerDoc.Paths.Remove(key);
             }
 
+            // connect/api
+            //var socialAuthMethod = swaggerDoc.Paths.First(p => p.Key == "/api/connect/token/social");
+            //swaggerDoc.Paths.Add("/api/connect/token", socialAuthMethod.Value);
+            //swaggerDoc.Paths.Remove(socialAuthMethod.Key);
+            //var refreshTokenMethod = swaggerDoc.Paths.First(p => p.Key == "/api/connect/token/refresh");
+            //swaggerDoc.Paths.Add("/api/connect/token", refreshTokenMethod.Value);
+            //swaggerDoc.Paths.Remove(refreshTokenMethod.Key);
+
             // 
             //var apiTokenConnect = new PathItem();
             //apiTokenConnect.Post = new Operation()

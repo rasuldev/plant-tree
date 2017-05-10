@@ -17,7 +17,22 @@ namespace PlantTree.Controllers.Api
         // POST api/values
         [HttpPost("token")]
         //[ProducesResponseType(typeof(AuthToken),200)]
-        public AuthToken PostToken([FromForm]string username, [FromForm]string password, [FromForm]string grant_type, [FromForm]string scope)
+        public AuthToken RequestToken([FromForm]string username, [FromForm]string password, [FromForm]string grant_type, [FromForm]string scope)
+        {
+            return new AuthToken();
+        }
+
+        // We add some fake methods in order to let swagger generate them
+        // Actually we want not to change api path and let it equal to api/connect/token
+        // But in this case swagger raises exception. So we use workaround: add to path #tag
+        [HttpPost("token#social")]
+        public AuthToken RequestTokenUsingSocial([FromForm]string identity_provider, [FromForm]string access_token, [FromForm]string grant_type, [FromForm]string scope)
+        {
+            return new AuthToken();
+        }
+
+        [HttpPost("token#refresh")]
+        public AuthToken RefreshToken([FromForm]string refresh_token, [FromForm]string grant_type, [FromForm]string scope)
         {
             return new AuthToken();
         }
