@@ -74,7 +74,7 @@ namespace AuthTokenServer.Config
         private async Task<TUser> AuthenticateExternal()
         {
             var accessToken = _context.Request.AccessToken;
-            var identityProvider = _context.Request.GetProperty<string>("identity_provider");
+            var identityProvider = _context.Request.IdentityProvider;
             if (string.IsNullOrEmpty(accessToken))
                 throw new AuthException("AccessToken is missing. Parameter access_token can't be empty");
             if (string.IsNullOrEmpty(identityProvider))
