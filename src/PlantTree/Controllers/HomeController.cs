@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PlantTree.Data;
 using PlantTree.Data.Entities;
+using PlantTree.Data.Misc;
 using PlantTree.Infrastructure.Common;
 
 namespace PlantTree.Controllers
@@ -18,12 +19,21 @@ namespace PlantTree.Controllers
             return View();
         }
 
-        public IActionResult About()
+        [Authorize(Roles = UserRoles.Admin)]
+        public IActionResult About([FromServices] StaticContentContext context)
         {
-            ViewData["Message"] = "Your application description page.";
-
+            ViewData["content"] = context.LoadAbout();
             return View();
         }
+
+        [HttpPost]
+        [Authorize(Roles = UserRoles.Admin)]
+        public IActionResult About([FromServices] StaticContentContext context, string aboutEditor)
+        {
+            context.SaveAbout(aboutEditor);
+            return RedirectToAction("About");
+        }
+
 
         public IActionResult Contact()
         {

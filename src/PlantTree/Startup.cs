@@ -27,6 +27,7 @@ using Microsoft.Extensions.WebEncoders;
 using Newtonsoft.Json.Converters;
 using NLog.Extensions.Logging;
 using NLog.Web;
+using PlantTree.Data.Misc;
 using PlantTree.Infrastructure.Common;
 using PlantTree.Infrastructure.Payments;
 using PlantTree.Infrastructure.Swagger;
@@ -118,6 +119,10 @@ namespace PlantTree
             Services.ConfigureServices(services);
             services.AddTransient<IProcessor, Processor>();
             ConfigureImageServices(services);
+
+            // Static data content 
+            services.AddSingleton<StaticContentContext>(
+                new StaticContentContext(Path.Combine(HostingEnvironment.ContentRootPath, "StaticData")));
         }
 
         private void ConfigureImageServices(IServiceCollection services)

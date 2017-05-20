@@ -37,7 +37,7 @@ namespace AuthTokenServer
             {
                 AppId = configuration["Authentication:Facebook:AppId"],
                 AppSecret = configuration["Authentication:Facebook:AppSecret"],
-                Fields = { "id", "name", "birthday", "gender", "email" },
+                Fields = { "id", "name", "birthday", "gender", "email", "birthday" },
             });
             services.AddSingleton<FacebookHandler>();
 

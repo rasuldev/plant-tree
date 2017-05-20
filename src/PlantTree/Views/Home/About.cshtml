@@ -1,7 +1,23 @@
 ﻿@{
     ViewData["Title"] = "About";
 }
-<h2>@ViewData["Title"].</h2>
-<h3>@ViewData["Message"]</h3>
 
-<p>Use this area to provide additional information.</p>
+<script src="~/lib/tinymce_4.6.1/js/tinymce/tinymce.min.js"></script>
+<script>
+    tinymce.init({
+        selector: 'textarea',
+        plugins: "code fullpage",
+    
+    });
+</script>
+
+@*<script src="~/lib/ckeditor_4.6.2/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('aboutEditor');
+</script>*@
+<form method="post">
+    <textarea id="aboutEditor" name="aboutEditor">
+        @ViewData["content"]
+    </textarea>
+    <input type="submit" value="Save" />
+</form>
